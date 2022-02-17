@@ -1,15 +1,6 @@
 import requests 
-#import lxml.html 
-#import rdflib
-#from rdflib import URIRef
-
-prefix = "https://www.letssingit.com/songs/popular/"
-visited = set()
 
 def getFile():
-    #r = requests.get(url) 
-    #doc = lxml.html.fromstring(r.content)
-     #print(url)
     prefix = "https://www.letssingit.com/songs/popular/"
     j = 0
     for i in range (1,21):
@@ -25,7 +16,6 @@ def getFile():
             link = song.split("<a href=")
             link = link[-1].replace("\n","").replace("\r","").replace(" ","").replace("\"","")
             getLyrics(str(link))
-
         
 def getLyrics(link):
     response = requests.get(link, verify=False)
@@ -87,5 +77,3 @@ def getLyrics(link):
 
 getFile()
 print("done")
-
-    
