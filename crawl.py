@@ -69,7 +69,7 @@ def getLyrics(link):
     genre = "genre: " + genre + "\n"
     
     response.close()
-    with open("/home/guestt/nlp/project/NLP_proj/Lyrics.txt", "a") as f:
+    with open("Lyrics.txt", "a") as f:
         f.write(name)
         f.write(singer)
         f.write(genre)
