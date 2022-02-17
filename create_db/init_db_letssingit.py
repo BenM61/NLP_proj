@@ -77,3 +77,5 @@ def getLyrics(link):
 
 getFile()
 print("done")
+
+#pop, rap, hiphop, rock, metal, r&b, children, electronic
