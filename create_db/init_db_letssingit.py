@@ -69,7 +69,7 @@ def getLyrics(link):
     genre = "genre: " + genre + "\n"
     
     response.close()
-    with open("Lyrics.txt", "a") as f:
+    with open("create_db/Lyrics.txt", "a") as f:
         f.write(name)
         f.write(singer)
         f.write(genre)
@@ -78,4 +78,4 @@ def getLyrics(link):
 getFile()
 print("done")
 
-#pop, rap, hiphop, rock, metal, r&b, children, electronic
+#pop, rap(50 - 100), hiphop, rock, metal, r&b, children, electronic

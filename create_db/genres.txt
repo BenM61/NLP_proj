@@ -1,0 +1,36 @@
+SUM OF ALL SONGS IN DATABASE: 24
+
+pop songs: 0
+rap songs: 0
+hiphop songs: 0 
+rock songs: 24
+metal songs: 0
+r&b songs: 0
+children songs: 0
+electronic songs: 0
+
+songs list with genres:
+! (The Song Formerly Known as)(Regurgitator): rock
+"40"(U2): rock
+"45"(The Gaslight Anthem): rock
+"5150"(Van Halen): rock
+"A" Bomb in Wardour Street(The Jam): rock
+"Blasco" Rossi(Vasco Rossi): rock
+"D" Train(Accept): rock
+"Do You Sleep"(Lisa Loeb): rock
+"Heroes"(David Bowie): rock
+"Heroes"(Blondie): rock
+"Heroes"/"Helden"(David Bowie): rock
+"I Often Dream of Trains"(Robyn Hitchcock): rock
+"M"(Los Piratas): rock
+"Pepe"(Duane Eddy): rock
+"The Take Over, The Breaks Over"(Fall Out Boy): rock
+"You've Got" the Touch(Alabama): rock
+#1 Crush(Garbage): rock
+#9 Dream(John Lennon): rock
+& Jay-Z Singt Uns Ein Lied(Casper): rock
+'39(George Michael): rock
+'54, '74, '90, 2006(Sportfreunde Stiller): rock
+'65 Love Affair(Paul Davis): rock
+'74-'75(The Connells): rock
+'A' Bomb In Wardour Street(The Jam): rock
