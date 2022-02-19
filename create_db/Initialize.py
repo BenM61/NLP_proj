@@ -10,7 +10,7 @@ song_dict = {}
 genre_dict, song_dict = db_util.get_dict()
 
 def getFile(genre):
-    for i in range (20,1000):
+    for i in range (10,1000):
         main_link = "https://www.lyrics.com/genre/" + genre
         print(i)
         if i > 1:
@@ -35,6 +35,7 @@ def getFile(genre):
             c = c.split(">")[0]
             c = c.replace("\"","")
             getLyrics(c,genre)
+        
         
 def getLyrics(link,genre):
     if genre == "Hip%20Hop":
@@ -77,8 +78,9 @@ def getLyrics(link,genre):
     response.close()
     db_util.change_file(genre_dict, song_dict)
 
-    with open("create_db/titles.txt", "a") as f:
-        f.write(name +": "+genre+"\n")
+    #with open("create_db/titles.txt", "a") as f:
+    #    f.write(name +": "+genre+"\n")
+    #write song dict to titles
 
     with open("create_db/"+genre+".txt", "a") as f:
         name += "("+singer+")"

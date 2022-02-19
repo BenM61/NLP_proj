@@ -1,9 +1,9 @@
-SUM OF ALL SONGS IN DATABASE: 106
+SUM OF ALL SONGS IN DATABASE: 0
 
-Pop songs: 35
+Pop songs: 0
 Jazz songs: 0
-Hiphop songs: 43
-Rock songs: 37
+Hiphop songs: 0
+Rock songs: 0
 Classical songs: 0
 R&b songs: 0
 Blues songs: 0
