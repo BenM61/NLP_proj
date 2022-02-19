@@ -12,7 +12,7 @@ def template():
 
 def change_file(genre_dict, songs_dict):
     ## making the content we want to write
-    contents = ["0" for i in range (0, len(songs_dict)+12)]
+    contents = ["0" for i in range (0, 10)]
     contents[0] = "SUM OF ALL SONGS IN DATABASE: "+ genre_dict["all"] +"\n"
     contents[1] ="\n"
     contents[2] = "Pop songs: " + genre_dict["Pop"] +"\n"
@@ -23,19 +23,21 @@ def change_file(genre_dict, songs_dict):
     contents[7] = "R&b songs: " + genre_dict["R&b"] +"\n"
     contents[8] = "Blues songs: " + genre_dict["Blues"] +"\n"
     contents[9] = "Electronic songs: " + genre_dict["Electronic"] +"\n"
-    contents[10] = "\n"
-    contents[11] = "songs list with genres:" +"\n"
-
-    i = 12
-    for key in songs_dict.keys():
-        contents[i] = key +": " + ", ".join(songs_dict[key]) +"\n"
-        i += 1
 
     ## actually writing to the file 
-    list = [content for content in contents]
     f = open("create_db/genres.txt", "w")
-    new_file_contents = "".join(list)
-    f.write(new_file_contents[:-1])
+    new_file_contents = "".join(contents)
+    f.write(new_file_contents)
+
+    #contents = ["0" for i in range (0,len(songs_dict))]
+    #i = 0
+    #for key in songs_dict.keys():
+    #    contents[i] = key +": " + ", ".join(songs_dict[key]) +"\n"
+    #    i += 1
+    
+    #f = open("create_db/titles.txt", "w")
+    #new_file_contents = "".join(contents)
+    #f.write(new_file_contents[:-1])
 
 def get_dict():
     genre_dict = {}
@@ -73,13 +75,21 @@ def get_dict():
                 continue
             if i == 9: #electronic
                 genre_dict["Electronic"] = line[18:-1]
-                continue
-            if i > 11: #songs
-                list2 = line.split(":")
-                song = list2[0]
-                genres = list2[1][1:].replace("\n","").split(", ")
-                songs_dict[song] = genres
-                continue
+
+    with open("create_db/titles.txt", "r") as f:
+        list = f.readlines()
+        for line in list:         
+            list2 = line.split(": ")
+            if len(list2) == 0: #last line of the file
+                break
+            song = list2[0]
+            genre = list2[1].replace("\n","").strip()
+            if song not in songs_dict:
+                songs_dict[song] = [genre]
+            else:
+                songs_dict[song] += [genre]
+            i+=1
+
     return genre_dict, songs_dict
 
 #dict1, dict2 = get_dict()

@@ -10,7 +10,7 @@ song_dict = {}
 genre_dict, song_dict = db_util.get_dict()
 
 def getFile(genre):
-    for i in range (1,2669):
+    for i in range (20,1000):
         main_link = "https://www.lyrics.com/genre/" + genre
         print(i)
         if i > 1:
@@ -29,15 +29,11 @@ def getFile(genre):
             return
         content = requests.get(main_link, verify=False)
         content = content.text
-        #print(main_link)
         content = content.split("<p class=\"lyric-meta-title\">")[1:]
-        if len(content) == 0:
-            print("check html on page " + str(i) + " of genre " + genre)
         for c in content:
             c = c.split("href=")[1]
             c = c.split(">")[0]
             c = c.replace("\"","")
-            #print(c)
             getLyrics(c,genre)
         
 def getLyrics(link,genre):
@@ -80,6 +76,10 @@ def getLyrics(link,genre):
     
     response.close()
     db_util.change_file(genre_dict, song_dict)
+
+    with open("create_db/titles.txt", "a") as f:
+        f.write(name +": "+genre+"\n")
+
     with open("create_db/"+genre+".txt", "a") as f:
         name += "("+singer+")"
         f.write("name: "+ name +":\n")
