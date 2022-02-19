@@ -15,14 +15,14 @@ def change_file(genre_dict, songs_dict):
     contents = ["0" for i in range (0, len(songs_dict)+12)]
     contents[0] = "SUM OF ALL SONGS IN DATABASE: "+ genre_dict["all"] +"\n"
     contents[1] ="\n"
-    contents[2] = "pop songs: " + genre_dict["pop"] +"\n"
-    contents[3] = "rap songs: " + genre_dict["rap"] +"\n"
-    contents[4] = "hiphop songs: " + genre_dict["hiphop"] +"\n"
-    contents[5] = "rock songs: " + genre_dict["rock"] +"\n"
-    contents[6] = "metal songs: " + genre_dict["metal"] +"\n"
-    contents[7] = "r&b songs: " + genre_dict["r&b"] +"\n"
-    contents[8] = "children songs: " + genre_dict["children"] +"\n"
-    contents[9] = "electronic songs: " + genre_dict["electronic"] +"\n"
+    contents[2] = "Pop songs: " + genre_dict["Pop"] +"\n"
+    contents[3] = "Jazz songs: " + genre_dict["Jazz"] +"\n"
+    contents[4] = "Hiphop songs: " + genre_dict["Hiphop"] +"\n"
+    contents[5] = "Rock songs: " + genre_dict["Rock"] +"\n"
+    contents[6] = "Classical songs: " + genre_dict["Classical"] +"\n"
+    contents[7] = "R&b songs: " + genre_dict["R&b"] +"\n"
+    contents[8] = "Blues songs: " + genre_dict["Blues"] +"\n"
+    contents[9] = "Electronic songs: " + genre_dict["Electronic"] +"\n"
     contents[10] = "\n"
     contents[11] = "songs list with genres:" +"\n"
 
@@ -51,28 +51,28 @@ def get_dict():
             if i == 1: #/n
                 continue
             if i == 2: #pop
-                genre_dict["pop"] = line[11:-1]
+                genre_dict["Pop"] = line[11:-1]
                 continue
-            if i == 3: #rap
-                genre_dict["rap"] = line[11:-1]
+            if i == 3: #Jazz
+                genre_dict["Jazz"] = line[12:-1]
                 continue
             if i == 4: #hiphop
-                genre_dict["hiphop"] = line[14:-1]
+                genre_dict["Hiphop"] = line[14:-1]
                 continue
             if i == 5: #rock
-                genre_dict["rock"] = line[12:-1]
+                genre_dict["Rock"] = line[12:-1]
                 continue
-            if i == 6: #metal
-                genre_dict["metal"] = line[13:-1]
+            if i == 6: #Classical
+                genre_dict["Classical"] = line[17:-1]
                 continue
             if i == 7: #r$b
-                genre_dict["r&b"] = line[11:-1]
+                genre_dict["R&b"] = line[11:-1]
                 continue
-            if i == 8: #children
-                genre_dict["children"] = line[16:-1]
+            if i == 8: #Blues
+                genre_dict["Blues"] = line[13:-1]
                 continue
             if i == 9: #electronic
-                genre_dict["electronic"] = line[18:-1]
+                genre_dict["Electronic"] = line[18:-1]
                 continue
             if i > 11: #songs
                 list2 = line.split(":")

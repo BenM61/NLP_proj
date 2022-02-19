@@ -1,36 +1,118 @@
-SUM OF ALL SONGS IN DATABASE: 24
+SUM OF ALL SONGS IN DATABASE: 106
 
-pop songs: 0
-rap songs: 0
-hiphop songs: 0 
-rock songs: 24
-metal songs: 0
-r&b songs: 0
-children songs: 0
-electronic songs: 0
+Pop songs: 35
+Jazz songs: 0
+Hiphop songs: 43
+Rock songs: 37
+Classical songs: 0
+R&b songs: 0
+Blues songs: 0
+Electronic songs: 0
 
 songs list with genres:
-! (The Song Formerly Known as)(Regurgitator): rock
-"40"(U2): rock
-"45"(The Gaslight Anthem): rock
-"5150"(Van Halen): rock
-"A" Bomb in Wardour Street(The Jam): rock
-"Blasco" Rossi(Vasco Rossi): rock
-"D" Train(Accept): rock
-"Do You Sleep"(Lisa Loeb): rock
-"Heroes"(David Bowie): rock
-"Heroes"(Blondie): rock
-"Heroes"/"Helden"(David Bowie): rock
-"I Often Dream of Trains"(Robyn Hitchcock): rock
-"M"(Los Piratas): rock
-"Pepe"(Duane Eddy): rock
-"The Take Over, The Breaks Over"(Fall Out Boy): rock
-"You've Got" the Touch(Alabama): rock
-#1 Crush(Garbage): rock
-#9 Dream(John Lennon): rock
-& Jay-Z Singt Uns Ein Lied(Casper): rock
-'39(George Michael): rock
-'54, '74, '90, 2006(Sportfreunde Stiller): rock
-'65 Love Affair(Paul Davis): rock
-'74-'75(The Connells): rock
-'A' Bomb In Wardour Street(The Jam): rock
+"A": Pop
+"A" You're Adorable: Pop
+"A" You're Adorable (The Alphabet Song): Pop
+"Blasco" Rossi: Pop, Rock
+"Meet el Presidente": Pop
+"Murder" He Says: Pop
+"Snow Day": Pop
+#1 Girl: Pop
+#Beautiful: Pop
+#STUPiDFACEDD: Pop, Hiphop
+#WHERESTHELOVE: Pop, Hiphop
+& It Was U: Pop
+'65 Love Affair: Pop, Rock
+'71 Charger: Pop
+'Deed I Do: Pop
+'Disco' la Passione: Pop, Rock
+'Disco' La Passione.: Pop, Rock
+'O Mare E Tu: Pop
+'O Sarracino: Pop
+'O Sole Mio (My Sunshine): Pop
+'O Sole Mio (Sunshine): Pop
+'Round Midnight: Pop, Rock
+'S Wonderful: Pop
+'Tain't Nobody's Biz-Ness If I Do: Pop
+'Til I Get Over You: Pop, Rock
+'Til I'm Done: Pop
+'Til the Day: Pop, Rock
+'Til You Come Back to Me: Pop
+'Till the End of Time: Pop
+'Twas the Night After Christmas: Pop
+'Twas the Night Before Christmas: Pop
+'Way Down Yonder in New Orleans: Pop
+(Ain't That) Just Like Me: Pop
+(All I Know) Feels Like Forever: Pop
+(And She Said) Take Me Now: Pop
+#1: Hiphop
+#1 Player: Hiphop
+#1 Stunna: Hiphop
+#BDAY: Hiphop
+#Grindmode: Hiphop
+#Twerkit: Hiphop
+$$$ Girlz: Hiphop
+'03 Bonnie & Clyde: Hiphop
+'06: Hiphop
+'97 Bonnie & Clyde: Hiphop
+'99 Live: Hiphop
+'A verità: Hiphop
+'Bout It Bout It II": Hiphop
+'Bout It, 'Bout It: Hiphop
+'Bout That Time: Hiphop
+'Till I Collapse: Hiphop
+(Everything I Do) I Do It for You: Hiphop
+(Ha Ha) Slow Down: Hiphop
+(Hot S**t) Country Grammar: Hiphop
+(How Could You) Bring Him Home: Hiphop
+(I Wanna See You) Push It Baby: Hiphop
+(Rock) Superstar: Hiphop
+(She's Got) Skillz: Hiphop
+(When Kim Say) Can You Hear Me Now?: Hiphop
+(You Gotta ) Fight for Your Right (To Party): Hiphop
+(You Gotta) Fight for Your Right (To Party): Hiphop
+(You're My One and Only) True Love: Hiphop
+***Flawless: Hiphop
+---- tha Police: Hiphop
+...In the Dog House: Hiphop
+...So Addictive: Hiphop
+..Hab' Gehört..: Hiphop
+.Hab' Gehört.: Hiphop
+0 To 100/The Catch Up: Hiphop
+03' Bonnie & Clyde: Hiphop
+03' Bonnie And Clyde: Hiphop
+1 2 Many...: Hiphop
+1 Luv: Hiphop
+1 Thing: Hiphop
+1, 2 Step: Hiphop
+1, 2, 1, 2: Hiphop
+! (The Song Formerly Known as): Rock
+"40": Rock
+"45": Rock
+"5150": Rock
+"A" Bomb in Wardour Street: Rock
+"D" Train: Rock
+"Do You Sleep": Rock
+"Heroes": Rock
+"Heroes"/"Helden": Rock
+"I Often Dream of Trains": Rock
+"M": Rock
+"Pepe": Rock
+"The Take Over, The Breaks Over": Rock
+"You've Got" the Touch: Rock
+#1 Crush: Rock
+#9 Dream: Rock
+& Jay-Z Singt Uns Ein Lied: Rock
+'39: Rock
+'54, '74, '90, 2006: Rock
+'74-'75: Rock
+'A' Bomb In Wardour Street: Rock
+'cause Cheap Is How I Feel: Rock
+'Cross the Breeze: Rock
+'It's a Good Life If You Don't Weaken': Rock
+'Round the Wheel: Rock
+'Round the Wheel...: Rock
+'Scuse Me: Rock
+'Til Death: Rock
+'Til Death Do Us Unite: Rock
+'Til the World Ends: Rock
