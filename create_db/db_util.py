@@ -129,17 +129,11 @@ def get_invalid(folder_path, criterion):
 				cnt_bad += 1
 				bad_files_names.append(filename)
 				
-	print(f"[DEBUG] There are {cnt_bad} invalid songs out of {cnt} total")
-	return bad_files_names
+	print(bad_files_names)
+	print(cnt_bad)
+	print(cnt)
 
-def remove_invalid_songs(path, criterion):
-	invalid_names = get_invalid(path, criterion)
-	amount = len(invalid_names)
+def remove_invalid_songs(path):
+	get_invalid(path, is_song_file_valid)
 
-	print(f"[INFO] Deleting {amount} invalid songs")
-
-	for name in invalid_names:
-		file_path = os.path.join(path, name)
-		os.remove(file_path)
-
-	print(f"[INFO] Delete complete")
+remove_invalid_songs(config.POP_PATH)
