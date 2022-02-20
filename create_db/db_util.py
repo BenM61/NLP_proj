@@ -98,7 +98,15 @@ def is_content_valid(lyrics):
 	lyrics = lyrics.replace("(", "")
 	lyrics = lyrics.replace(")", "")
 	lyrics = lyrics.replace(".", "")
+	lyrics = lyrics.replace("[", "")
+	lyrics = lyrics.replace("]", "")
+	lyrics = lyrics.replace(";", "")
+	lyrics = lyrics.replace("&", "")
+	lyrics = lyrics.replace("*", "")
 	lyrics = "".join(lyrics.split())
+
+
+	
 
 	return lyrics.isascii() and lyrics.isalnum()
 
