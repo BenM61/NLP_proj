@@ -11,7 +11,7 @@ def getFile(Lyrics_genre, genre_dict, song_dict):
 	if not os.path.exists(genre_folder):
 		os.makedirs(genre_folder)
 
-	for i in range (235, 500):
+	for i in range (1, 500):
 		main_link = "https://www.lyrics.com/genre/" + Lyrics_genre
 
 		print(f"[INFO] Current page: {i}, current genre: {genre_label}")
@@ -103,16 +103,17 @@ def initialize():
 
 	stats_dict, title_dict = db_util.load_dicts()
 
-	getFile("Pop", stats_dict, title_dict) #1887
-	getFile("Hip%20Hop", stats_dict, title_dict) #596
-	getFile("Rock", stats_dict, title_dict) #2668
-	getFile("Electronic", stats_dict, title_dict) #881
-	getFile("Blues", stats_dict, title_dict) #217
+	#getFile("Pop", stats_dict, title_dict) #1887
+	#getFile("Hip%20Hop", stats_dict, title_dict) #596
+	#getFile("Rock", stats_dict, title_dict) #2668
+	#getFile("Electronic", stats_dict, title_dict) #881
+	#getFile("Blues", stats_dict, title_dict) #217
 	print(stats_dict)
 	stats_dict["CLASSICAL"] = 0
-	getFile("Classical", stats_dict, title_dict) #34
-	getFile("Jazz", stats_dict, title_dict) #668
+	#getFile("Classical", stats_dict, title_dict) #34
+	#getFile("Jazz", stats_dict, title_dict) #668
 
 	print("[INFO] Finished initialization")
 
-#initialize()
+
+initialize()
