@@ -11,7 +11,7 @@ def getFile(Lyrics_genre, genre_dict, song_dict):
 	if not os.path.exists(genre_folder):
 		os.makedirs(genre_folder)
 
-	for i in range (1, 1000):
+	for i in range (235, 500):
 		main_link = "https://www.lyrics.com/genre/" + Lyrics_genre
 
 		print(f"[INFO] Current page: {i}, current genre: {genre_label}")
@@ -86,7 +86,11 @@ def getLyrics(link, genre, folder, genre_dict, song_dict):
 
 	response.close()
 
-	# for valid names, write song lyrics
+	# for valid names, write song lyrics if valid
+	if not db_util.is_content_valid(clean_ly):
+		print(f"[DEBUG] skipped {orig_name}, for content in non-English")
+		return
+
 	song_path = os.path.join(folder, name + ".txt")
 	f = open(song_path, "w")
 	f.write(clean_ly)
@@ -111,4 +115,4 @@ def initialize():
 
 	print("[INFO] Finished initialization")
 
-initialize()
+#initialize()

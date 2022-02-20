@@ -72,16 +72,60 @@ def save_dicts(stats_dict, title_dict):
 	pickle.dump(stats_dict, stats_file)
 	pickle.dump(title_dict, title_file)
 
-def is_valid_char(c):
+def is_char_valid(c):
 	c = str(c)
-	return c == " " or c == "-" or c == "_" or c.isalnum()
+	return c == " " or c == "-" or c == "_" or (c.isascii() and c.isalnum())
 
 def get_valid_filename(name):
 	name = str(name)
-	name2 = "".join(filter(is_valid_char, name))
+	name2 = "".join(filter(is_char_valid, name))
 	
-	if not name[0].isalnum or not name == name2:
+	if not name[0].isascii() or not name == name2:
 		return None
 
 	name = name.replace(" ", "_")
 	return name
+
+def is_content_valid(lyrics):
+	lyrics = str(lyrics)
+	lyrics = lyrics.replace(":", "")
+	lyrics = lyrics.replace("?", "")
+	lyrics = lyrics.replace("!", "")
+	lyrics = lyrics.replace("\"", "")
+	lyrics = lyrics.replace(",", "")
+	lyrics = lyrics.replace("-", "")
+	lyrics = lyrics.replace("'", "")
+	lyrics = lyrics.replace("(", "")
+	lyrics = lyrics.replace(")", "")
+	lyrics = lyrics.replace(".", "")
+	lyrics = "".join(lyrics.split())
+
+	return lyrics.isascii() and lyrics.isalnum()
+
+def is_song_file_valid(f):
+	# filename without path and without .txt
+	name = os.path.basename(f.name)[:-4]
+	content = f.read()
+	return is_content_valid(content) and (get_valid_filename(name) == name)
+
+# used to find songs with unwanted names/ contents/ etc.
+def get_invalid(folder_path, criterion):
+	cnt, cnt_bad = 0, 0
+	bad_files_names = []
+	for filename in os.listdir(folder_path):
+		file_path = os.path.join(folder_path, filename)
+		if os.path.isfile(file_path):
+			cnt += 1
+			f = open(str(file_path), "r")
+			if not criterion(f):
+				cnt_bad += 1
+				bad_files_names.append(filename)
+				
+	print(bad_files_names)
+	print(cnt_bad)
+	print(cnt)
+
+def remove_invalid_songs(path):
+	get_invalid(path, is_song_file_valid)
+
+remove_invalid_songs(config.POP_PATH)

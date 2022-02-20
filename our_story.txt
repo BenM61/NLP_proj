@@ -1,0 +1,4 @@
+building the db:
+1. tried a-z lyrics, then another 10+ apis/ websites. then used Lyrics.com
+2. backup our files in text files, then upgraded to pickle
+3. the songs we use have reasonable names and are only in English (had to remove some of the early songs we added to ensure that)
