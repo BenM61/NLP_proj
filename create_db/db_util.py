@@ -129,11 +129,26 @@ def get_invalid(folder_path, criterion):
 				cnt_bad += 1
 				bad_files_names.append(filename)
 				
-	print(bad_files_names)
-	print(cnt_bad)
-	print(cnt)
+	return bad_files_names
 
-def remove_invalid_songs(path):
-	get_invalid(path, is_song_file_valid)
+def remove_invalid_songs(label):
+	stats_dict, title_dict = load_dicts()
+	label_folder = config.LABEL_TO_PATH[label]
 
-remove_invalid_songs(config.POP_PATH)
+	invalid_fnames = get_invalid(label_folder, is_song_file_valid)
+
+	print(f"[INFO] Removing {len(invalid_fnames)} invalid {label} songs")
+
+	for fname in invalid_fnames:
+		curr_title = fname[:-4]
+		curr_path = os.path.join(label_folder, fname)
+
+		os.remove(curr_path)
+		if (title_dict[curr_title] == [label]):
+			del title_dict[curr_title]
+		else:
+			title_dict[curr_title].remove(label)
+		stats_dict[label] = str(int(stats_dict[label])  - 1)
+		stats_dict["all"] = str(int(stats_dict["all"])  - 1)
+
+		save_dicts(stats_dict, title_dict)
