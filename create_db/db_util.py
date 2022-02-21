@@ -32,36 +32,27 @@ def change_file(genre_dict, songs_dict):
 	new_file_contents = "".join(contents)
 	f.write(new_file_contents)
 
-# state- overall count, genre/ int
 # title- song title / genre list
-def load_dicts():
-	# print("[DEBUG] loading temp dicts")
+def load_dict():
+	# print("[DEBUG] loading temp dict")
 
-	stats_dict = {"all" : 0, "POP" : 0, "HIP_HOP" : 0, "ROCK" : 0,
-			"ELECTRONIC" : 0, "BLUES" : 0, "JAZZ" : 0, "CLASSICAL" : 0}
-	#  TODO:  and so on for the other categories...
 
 	title_dict = {}
 
 
-	if os.path.exists(config.TEMP_OVERALL_STATS_PATH):
-		stats_file = open(config.TEMP_OVERALL_STATS_PATH, "rb")
+	if os.path.exists(config.TEMP_TITLES_GENRES_PATH):
 		title_file = open(config.TEMP_TITLES_GENRES_PATH, "rb")
 
-		stats_dict = pickle.load(stats_file)
 		title_dict = pickle.load(title_file)
 
-	return stats_dict, title_dict
+	return title_dict
 
-# state- overall count, genre/ int
 # title- song title / genre list
-def save_dicts(stats_dict, title_dict):
+def save_dict(title_dict):
 	# print("[DEBUG] saving temp dicts")
 
-	stats_file = open(config.TEMP_OVERALL_STATS_PATH, "wb")
 	title_file = open(config.TEMP_TITLES_GENRES_PATH, "wb")
 
-	pickle.dump(stats_dict, stats_file)
 	pickle.dump(title_dict, title_file)
 
 def is_char_valid(c):
@@ -108,21 +99,18 @@ def is_song_file_valid(f):
 # used to find songs with unwanted names/ contents/ etc.
 def get_invalid(label, criterion):
 	folder_path = config.LABEL_TO_PATH[label]
-	cnt, cnt_bad = 0, 0
 	bad_files_names = []
 	for filename in os.listdir(folder_path):
 		file_path = os.path.join(folder_path, filename)
 		if os.path.isfile(file_path):
-			cnt += 1
 			f = open(str(file_path), "r")
 			if not criterion(f):
-				cnt_bad += 1
 				bad_files_names.append(filename)
 				
 	return bad_files_names
 
 def remove_invalid_songs(label):
-	stats_dict, title_dict = load_dicts()
+	title_dict = load_dict()
 	label_folder = config.LABEL_TO_PATH[label]
 
 	invalid_fnames = get_invalid(label, is_song_file_valid)
@@ -136,17 +124,15 @@ def remove_invalid_songs(label):
 		os.remove(curr_path)
 		if (title_dict[curr_title] == [label]):
 			del title_dict[curr_title]
-			stats_dict["all"] = str(int(stats_dict["all"])  - 1)
 		else:
 			title_dict[curr_title].remove(label)
-		stats_dict[label] = str(int(stats_dict[label])  - 1)
-
-		save_dicts(stats_dict, title_dict)
+		
+	save_dict(title_dict)
 
 # get titles of songs that doesn't have lyrics files from the dictionaries
 # used for fixing incorrect counting
 def get_ghost_songs(label):
-	_, title_dict = load_dicts()
+	title_dict = load_dict()
 	folder_path = config.LABEL_TO_PATH[label]
 	bad_titles_names = []
 
@@ -160,8 +146,8 @@ def get_ghost_songs(label):
 
 	return bad_titles_names
 
-def remove_ghoust_songs(label):
-	stats_dict, title_dict = load_dicts()
+def remove_ghost_songs(label):
+	title_dict = load_dict()
 	ghost_titles = get_ghost_songs(label)
 
 	print(f"[INFO] Removing {len(ghost_titles)} ghost {label} songs from dicts")
@@ -169,10 +155,7 @@ def remove_ghoust_songs(label):
 	for title in ghost_titles:
 		if (title_dict[title] == [label]):
 			del title_dict[title]
-			stats_dict["all"] = str(int(stats_dict["all"])  - 1)
 		else:
 			title_dict[title].remove(label)
-
-		stats_dict[label] = str(int(stats_dict[label])  - 1)
-
-		save_dicts(stats_dict, title_dict)
+	
+	save_dict(title_dict)

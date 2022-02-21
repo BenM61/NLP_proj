@@ -11,7 +11,6 @@ OVERALL_STATS_PATH = os.path.join(DB_PATH, "stats.txt")
 TITLES_GENRES_PATH = os.path.join(DB_PATH, "titles.txt")
 
 # temp files to set the metadata 
-TEMP_OVERALL_STATS_PATH = os.path.join(DB_PATH, "temp_stats.pickle")
 TEMP_TITLES_GENRES_PATH = os.path.join(DB_PATH, "temp_titles.pickle")
 
 # folders for the song's lyrics to be in

@@ -4,7 +4,7 @@ import urllib3
 import config
 import os
 
-def getFile(Lyrics_genre, genre_dict, song_dict):
+def getFile(Lyrics_genre, song_dict):
 	genre_label = config.GENRE_TO_LABEL[Lyrics_genre]
 	genre_folder = config.LABEL_TO_PATH[genre_label]
 
@@ -38,12 +38,12 @@ def getFile(Lyrics_genre, genre_dict, song_dict):
 			c = c.split("href=")[1]
 			c = c.split(">")[0]
 			c = c.replace("\"","")
-			getLyrics(c, genre_label, genre_folder, genre_dict, song_dict) 
+			getLyrics(c, genre_label, genre_folder, song_dict) 
 
 		# update dicts after each page
-		db_util.save_dicts(genre_dict, song_dict)
+		db_util.save_dict(song_dict)
 		
-def getLyrics(link, genre, folder, genre_dict, song_dict):
+def getLyrics(link, genre, folder, song_dict):
 	link = "https://www.lyrics.com/" + link
 	response = requests.get(link, verify=False)
 	txt = response.text
@@ -86,11 +86,8 @@ def getLyrics(link, genre, folder, genre_dict, song_dict):
 			return
 		else: # exist on another genre
 			song_dict[name] = song_dict[name] + [genre]
-			genre_dict[genre] = str (int(genre_dict[genre]) + 1)
 	else:
 		song_dict[name] = [genre]
-		genre_dict["all"] = str (int(genre_dict["all"]) + 1)
-		genre_dict[genre] = str (int(genre_dict[genre]) + 1)
 
 	song_path = os.path.join(folder, name + ".txt")
 	f = open(song_path, "w")
@@ -102,23 +99,49 @@ def initialize():
 	if not os.path.exists(config.DB_PATH):
 		os.makedirs(config.DB_PATH)
 
-	stats_dict, title_dict = db_util.load_dicts()
+	title_dict = db_util.load_dict()
 
-	#getFile("Pop", stats_dict, title_dict) #1887
-	#getFile("Hip%20Hop", stats_dict, title_dict) #596
-	#getFile("Rock", stats_dict, title_dict) #2668
-	getFile("Electronic", stats_dict, title_dict) #881
-	#getFile("Blues", stats_dict, title_dict) #217
-	#print(stats_dict)
-	#stats_dict["CLASSICAL"] = 0
-	#getFile("Classical", stats_dict, title_dict) #34
-	#getFile("Jazz", stats_dict, title_dict) #668
+	#getFile("Pop", title_dict) #1887
+	#getFile("Hip%20Hop", title_dict) #596
+	#getFile("Rock", title_dict) #2668
+	getFile("Electronic", title_dict) #881
+	#getFile("Blues", title_dict) #217
+	#getFile("Classical", title_dict) #34
+	#getFile("Jazz", title_dict) #668
 
 	print("[INFO] Finished initialization")
 
 def get_status():
-	stats_dict, title_dict = db_util.load_dicts()
-	print(stats_dict)
+	labels = ["POP", "HIP_HOP", "ROCK", "ELECTRONIC", "BLUES", "JAZZ", "CLASSICAL"]
+	#  TODO:  and so on for the other categories...
+
+	label_dict = {}
+	cnt = 0
+	for label in labels:
+		folder_path = config.LABEL_TO_PATH[label]
+		curr_cnt = 0
+		if os.path.exists(folder_path):
+			for filename in os.listdir(folder_path):
+				file_path = os.path.join(folder_path, filename)
+				if os.path.isfile(file_path):
+					curr_cnt += 1
+
+		label_dict[label] = curr_cnt
+		cnt += curr_cnt
+	
+	label_dict["all"] = cnt
+	## making the content we want to write
+	s = "STATUS:\n"
+	s += "SUM OF ALL SONGS IN DATABASE (including duplicates): "+ str(label_dict["all"]) +"\n\n"
+	s += "Pop songs: " + str(label_dict["POP"]) +"\n"
+	s += "Jazz songs: " + str(label_dict["JAZZ"]) +"\n"
+	s += "Hiphop songs: " + str(label_dict["HIP_HOP"]) +"\n"
+	s += "Rock songs: " + str(label_dict["ROCK"]) +"\n"
+	s += "Classical songs: " + str(label_dict["CLASSICAL"]) +"\n"
+	#s += "R&b songs: " + label_dict["R&b"] +"\n"
+	s += "Blues songs: " + str(label_dict["BLUES"]) +"\n"
+	s += "Electronic songs: " + str(label_dict["ELECTRONIC"]) +"\n"
+	print(s)
 
 get_status()
-initialize()
+#initialize()
