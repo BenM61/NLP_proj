@@ -59,7 +59,6 @@ def getLyrics(link, genre, folder, genre_dict, song_dict):
 		print(f"[DEBUG] skipped {orig_name}")
 		return
 			
-	genre_dict[genre] = str (int(genre_dict[genre]) + 1)
 	ly = txt.split("data-lang=\"en\">")[1]
 	ly = ly.split("</pre>")[0]
 	ly = ly.split("</a>")
@@ -87,9 +86,11 @@ def getLyrics(link, genre, folder, genre_dict, song_dict):
 			return
 		else: # exist on another genre
 			song_dict[name] = song_dict[name] + [genre]
+			genre_dict[genre] = str (int(genre_dict[genre]) + 1)
 	else:
 		song_dict[name] = [genre]
 		genre_dict["all"] = str (int(genre_dict["all"]) + 1)
+		genre_dict[genre] = str (int(genre_dict[genre]) + 1)
 
 	song_path = os.path.join(folder, name + ".txt")
 	f = open(song_path, "w")
@@ -105,8 +106,8 @@ def initialize():
 
 	#getFile("Pop", stats_dict, title_dict) #1887
 	#getFile("Hip%20Hop", stats_dict, title_dict) #596
-	getFile("Rock", stats_dict, title_dict) #2668
-	#getFile("Electronic", stats_dict, title_dict) #881
+	#getFile("Rock", stats_dict, title_dict) #2668
+	getFile("Electronic", stats_dict, title_dict) #881
 	#getFile("Blues", stats_dict, title_dict) #217
 	#print(stats_dict)
 	#stats_dict["CLASSICAL"] = 0

@@ -32,16 +32,8 @@ def change_file(genre_dict, songs_dict):
 	new_file_contents = "".join(contents)
 	f.write(new_file_contents)
 
-	#contents = ["0" for i in range (0,len(songs_dict))]
-	#i = 0
-	#for key in songs_dict.keys():
-	#    contents[i] = key +": " + ", ".join(songs_dict[key]) +"\n"
-	#    i += 1
-	
-	#f = open("create_db/titles.txt", "w")
-	#new_file_contents = "".join(contents)
-	#f.write(new_file_contents[:-1])
-
+# state- overall count, genre/ int
+# title- song title / genre list
 def load_dicts():
 	# print("[DEBUG] loading temp dicts")
 
@@ -62,7 +54,7 @@ def load_dicts():
 	return stats_dict, title_dict
 
 # state- overall count, genre/ int
-# title- song title / 
+# title- song title / genre list
 def save_dicts(stats_dict, title_dict):
 	# print("[DEBUG] saving temp dicts")
 
@@ -114,7 +106,8 @@ def is_song_file_valid(f):
 	return is_content_valid(content) and (get_valid_filename(name) == name)
 
 # used to find songs with unwanted names/ contents/ etc.
-def get_invalid(folder_path, criterion):
+def get_invalid(label, criterion):
+	folder_path = config.LABEL_TO_PATH[label]
 	cnt, cnt_bad = 0, 0
 	bad_files_names = []
 	for filename in os.listdir(folder_path):
@@ -132,7 +125,7 @@ def remove_invalid_songs(label):
 	stats_dict, title_dict = load_dicts()
 	label_folder = config.LABEL_TO_PATH[label]
 
-	invalid_fnames = get_invalid(label_folder, is_song_file_valid)
+	invalid_fnames = get_invalid(label, is_song_file_valid)
 
 	print(f"[INFO] Removing {len(invalid_fnames)} invalid {label} songs")
 
@@ -143,9 +136,43 @@ def remove_invalid_songs(label):
 		os.remove(curr_path)
 		if (title_dict[curr_title] == [label]):
 			del title_dict[curr_title]
+			stats_dict["all"] = str(int(stats_dict["all"])  - 1)
 		else:
 			title_dict[curr_title].remove(label)
 		stats_dict[label] = str(int(stats_dict[label])  - 1)
-		stats_dict["all"] = str(int(stats_dict["all"])  - 1)
+
+		save_dicts(stats_dict, title_dict)
+
+# get titles of songs that doesn't have lyrics files from the dictionaries
+# used for fixing incorrect counting
+def get_ghost_songs(label):
+	_, title_dict = load_dicts()
+	folder_path = config.LABEL_TO_PATH[label]
+	bad_titles_names = []
+
+	for title, genres in title_dict.items():
+		if label in genres:
+			filename = title + ".txt"
+			file_path = os.path.join(folder_path, filename)
+			if not os.path.isfile(file_path):
+				bad_titles_names.append(title)
+				print(f"[DEBUG] Found ghost- {title} in {label}")
+
+	return bad_titles_names
+
+def remove_ghoust_songs(label):
+	stats_dict, title_dict = load_dicts()
+	ghost_titles = get_ghost_songs(label)
+
+	print(f"[INFO] Removing {len(ghost_titles)} ghost {label} songs from dicts")
+
+	for title in ghost_titles:
+		if (title_dict[title] == [label]):
+			del title_dict[title]
+			stats_dict["all"] = str(int(stats_dict["all"])  - 1)
+		else:
+			title_dict[title].remove(label)
+
+		stats_dict[label] = str(int(stats_dict[label])  - 1)
 
 		save_dicts(stats_dict, title_dict)
