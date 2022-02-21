@@ -11,7 +11,7 @@ def getFile(Lyrics_genre, genre_dict, song_dict):
 	if not os.path.exists(genre_folder):
 		os.makedirs(genre_folder)
 
-	for i in range (466, 500):
+	for i in range (1, 500):
 		main_link = "https://www.lyrics.com/genre/" + Lyrics_genre
 
 		print(f"[INFO] Current page: {i}, current genre: {genre_label}")
@@ -58,15 +58,6 @@ def getLyrics(link, genre, folder, genre_dict, song_dict):
 	if name is None:
 		print(f"[DEBUG] skipped {orig_name}")
 		return
-
-	if name in song_dict:
-		if genre in song_dict[name]: # exist in db
-			return
-		else: # exist on another genre
-			song_dict[name] = song_dict[name] + [genre]
-	else:
-		song_dict[name] = [genre]
-		genre_dict["all"] = str (int(genre_dict["all"]) + 1)
 			
 	genre_dict[genre] = str (int(genre_dict[genre]) + 1)
 	ly = txt.split("data-lang=\"en\">")[1]
@@ -91,6 +82,15 @@ def getLyrics(link, genre, folder, genre_dict, song_dict):
 		print(f"[DEBUG] skipped {orig_name}, for content in non-English")
 		return
 
+	if name in song_dict:
+		if genre in song_dict[name]: # exist in db
+			return
+		else: # exist on another genre
+			song_dict[name] = song_dict[name] + [genre]
+	else:
+		song_dict[name] = [genre]
+		genre_dict["all"] = str (int(genre_dict["all"]) + 1)
+
 	song_path = os.path.join(folder, name + ".txt")
 	f = open(song_path, "w")
 	f.write(clean_ly)
@@ -104,8 +104,8 @@ def initialize():
 	stats_dict, title_dict = db_util.load_dicts()
 
 	#getFile("Pop", stats_dict, title_dict) #1887
-	getFile("Hip%20Hop", stats_dict, title_dict) #596
-	#getFile("Rock", stats_dict, title_dict) #2668
+	#getFile("Hip%20Hop", stats_dict, title_dict) #596
+	getFile("Rock", stats_dict, title_dict) #2668
 	#getFile("Electronic", stats_dict, title_dict) #881
 	#getFile("Blues", stats_dict, title_dict) #217
 	#print(stats_dict)
