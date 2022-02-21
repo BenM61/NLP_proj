@@ -80,7 +80,7 @@ def get_valid_filename(name):
 	name = str(name)
 	name2 = "".join(filter(is_char_valid, name))
 	
-	if not name[0].isascii() or not name == name2:
+	if name == "" or not name[0].isascii() or not name == name2:
 		return None
 
 	name = name.replace(" ", "_")
@@ -104,9 +104,6 @@ def is_content_valid(lyrics):
 	lyrics = lyrics.replace("&", "")
 	lyrics = lyrics.replace("*", "")
 	lyrics = "".join(lyrics.split())
-
-
-	
 
 	return lyrics.isascii() and lyrics.isalnum()
 
