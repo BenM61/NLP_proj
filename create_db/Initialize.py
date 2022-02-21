@@ -11,7 +11,7 @@ def getFile(Lyrics_genre, song_dict):
 	if not os.path.exists(genre_folder):
 		os.makedirs(genre_folder)
 
-	for i in range (1, 500):
+	for i in range (157, 500):
 		main_link = "https://www.lyrics.com/genre/" + Lyrics_genre
 
 		print(f"[INFO] Current page: {i}, current genre: {genre_label}")
@@ -148,19 +148,16 @@ def get_status():
 	on = 0
 	tw = 0
 	tr = 0
-	for k, v in db_util.load_dict().items():
+	for v in db_util.load_dict().values():
 		if len(v) == 1:
 			on += 1
-		elif len(v) ==2 :
+		elif len(v) == 2:
 			tw += 1
 		elif len(v) == 3:
 			tr += 1
 
-	print(f"#One tag: {on}; #Two: {tw}; #Three: {tr}")
+	print(f"#One tag: {on}; #Two: {tw}; #Three: {tr}\n")
 
 
 get_status()
-
-
-
-#initialize()
+initialize()
