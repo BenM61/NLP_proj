@@ -115,4 +115,9 @@ def initialize():
 
 	print("[INFO] Finished initialization")
 
+def get_status():
+	stats_dict, title_dict = db_util.load_dicts()
+	print(stats_dict)
+
+get_status()
 initialize()
