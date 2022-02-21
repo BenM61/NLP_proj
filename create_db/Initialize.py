@@ -11,7 +11,7 @@ def getFile(Lyrics_genre, genre_dict, song_dict):
 	if not os.path.exists(genre_folder):
 		os.makedirs(genre_folder)
 
-	for i in range (1, 500):
+	for i in range (196, 500):
 		main_link = "https://www.lyrics.com/genre/" + Lyrics_genre
 
 		print(f"[INFO] Current page: {i}, current genre: {genre_label}")
@@ -105,7 +105,7 @@ def initialize():
 
 	#getFile("Pop", stats_dict, title_dict) #1887
 	#getFile("Hip%20Hop", stats_dict, title_dict) #596
-	#getFile("Rock", stats_dict, title_dict) #2668
+	getFile("Rock", stats_dict, title_dict) #2668
 	#getFile("Electronic", stats_dict, title_dict) #881
 	#getFile("Blues", stats_dict, title_dict) #217
 	print(stats_dict)
