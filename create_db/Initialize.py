@@ -11,7 +11,7 @@ def getFile(Lyrics_genre, genre_dict, song_dict):
 	if not os.path.exists(genre_folder):
 		os.makedirs(genre_folder)
 
-	for i in range (321, 341):
+	for i in range (466, 500):
 		main_link = "https://www.lyrics.com/genre/" + Lyrics_genre
 
 		print(f"[INFO] Current page: {i}, current genre: {genre_label}")
