@@ -130,9 +130,11 @@ def get_status():
 		cnt += curr_cnt
 	
 	label_dict["all"] = cnt
+	total_titles = len(db_util.load_dict().keys())
 	## making the content we want to write
 	s = "STATUS:\n"
-	s += "SUM OF ALL SONGS IN DATABASE (including duplicates): "+ str(label_dict["all"]) +"\n\n"
+	s += "SUM OF ALL SONGS IN DATABASE (including duplicates): "+ str(label_dict["all"]) +"\n"
+	s += "SUM OF ALL SONGS IN DATABASE (excluding duplicates): "+ str(total_titles) +"\n\n"
 	s += "Pop songs: " + str(label_dict["POP"]) +"\n"
 	s += "Jazz songs: " + str(label_dict["JAZZ"]) +"\n"
 	s += "Hiphop songs: " + str(label_dict["HIP_HOP"]) +"\n"
@@ -143,5 +145,22 @@ def get_status():
 	s += "Electronic songs: " + str(label_dict["ELECTRONIC"]) +"\n"
 	print(s)
 
+	on = 0
+	tw = 0
+	tr = 0
+	for k, v in db_util.load_dict().items():
+		if len(v) == 1:
+			on += 1
+		elif len(v) ==2 :
+			tw += 1
+		elif len(v) == 3:
+			tr += 1
+
+	print(f"#One tag: {on}; #Two: {tw}; #Three: {tr}")
+
+
 get_status()
+
+
+
 #initialize()
