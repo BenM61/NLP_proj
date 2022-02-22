@@ -159,4 +159,4 @@ def get_status():
 	print(s)
 
 get_status()
-initialize()
+#initialize()
