@@ -4,14 +4,14 @@ import urllib3
 import config
 import os
 
-def getFile(Lyrics_genre, song_dict):
+def getFile(Lyrics_genre, song_dict, start=1):
 	genre_label = config.GENRE_TO_LABEL[Lyrics_genre]
 	genre_folder = config.LABEL_TO_PATH[genre_label]
 
 	if not os.path.exists(genre_folder):
 		os.makedirs(genre_folder)
 
-	for i in range (157, 500):
+	for i in range (start, 500):
 		main_link = "https://www.lyrics.com/genre/" + Lyrics_genre
 
 		print(f"[INFO] Current page: {i}, current genre: {genre_label}")
@@ -104,10 +104,10 @@ def initialize():
 	#getFile("Pop", title_dict) #1887
 	#getFile("Hip%20Hop", title_dict) #596
 	#getFile("Rock", title_dict) #2668
-	getFile("Electronic", title_dict) #881
-	#getFile("Blues", title_dict) #217
+	#getFile("Electronic", title_dict, 317) #881
+	#getFile("Blues", title_dict, 176) #217
 	#getFile("Classical", title_dict) #34
-	#getFile("Jazz", title_dict) #668
+	getFile("Jazz", title_dict, 349) #668
 
 	print("[INFO] Finished initialization")
 
@@ -133,31 +133,30 @@ def get_status():
 	total_titles = len(db_util.load_dict().keys())
 	## making the content we want to write
 	s = "STATUS:\n"
-	s += "SUM OF ALL SONGS IN DATABASE (including duplicates): "+ str(label_dict["all"]) +"\n"
-	s += "SUM OF ALL SONGS IN DATABASE (excluding duplicates): "+ str(total_titles) +"\n\n"
-	s += "Pop songs: " + str(label_dict["POP"]) +"\n"
-	s += "Jazz songs: " + str(label_dict["JAZZ"]) +"\n"
-	s += "Hiphop songs: " + str(label_dict["HIP_HOP"]) +"\n"
-	s += "Rock songs: " + str(label_dict["ROCK"]) +"\n"
-	s += "Classical songs: " + str(label_dict["CLASSICAL"]) +"\n"
-	#s += "R&b songs: " + label_dict["R&b"] +"\n"
-	s += "Blues songs: " + str(label_dict["BLUES"]) +"\n"
-	s += "Electronic songs: " + str(label_dict["ELECTRONIC"]) +"\n"
+	s += "AMONUT OF ALL SONGS IN DATABASE (including duplicates): "+ str(label_dict["all"]) +"\n"
+	s += "AMONUT OF ALL SONGS IN DATABASE (excluding duplicates): "+ str(total_titles) +"\n\n"
+	for label in config.LABEL_TO_PATH.keys():
+		amt = label_dict[label]
+		percent = str(label_dict[label] * 100 / total_titles)[:4]
+		s += f"{label} songs: {percent}% ({amt})\n"
+		
 	print(s)
 
-	on = 0
-	tw = 0
-	tr = 0
+	genre_amt_dict = {}
 	for v in db_util.load_dict().values():
-		if len(v) == 1:
-			on += 1
-		elif len(v) == 2:
-			tw += 1
-		elif len(v) == 3:
-			tr += 1
+		n = len(v)
+		if n not in genre_amt_dict:
+			genre_amt_dict[n] = 1
+		else:
+			genre_amt_dict[n] += 1
 
-	print(f"#One tag: {on}; #Two: {tw}; #Three: {tr}\n")
+	s = f"Tag distribution: \n"
+	for i in range(len(genre_amt_dict.keys())):
+			amt = genre_amt_dict[i+1]
+			percent = str(genre_amt_dict[i+1]*100 / total_titles)[:4]
+			s += f"{i+1}: {percent}% ({amt})   "
 
+	print(s)
 
 get_status()
 initialize()
