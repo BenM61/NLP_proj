@@ -30,6 +30,8 @@ def getFile(Lyrics_genre, song_dict, start=1):
 			return
 		if Lyrics_genre == "Jazz" and i > 668:
 			return
+		if Lyrics_genre == "Funk%20--%20Soul" and i > 580:
+			return
 
 		content = requests.get(main_link, verify=False)
 		content = content.text
@@ -104,15 +106,16 @@ def initialize():
 	#getFile("Pop", title_dict) #1887
 	#getFile("Hip%20Hop", title_dict) #596
 	#getFile("Rock", title_dict) #2668
-	#getFile("Electronic", title_dict, 317) #881
-	#getFile("Blues", title_dict, 176) #217
+	#getFile("Electronic", title_dict) #881
+	#getFile("Blues", title_dict) #217
 	#getFile("Classical", title_dict) #34
-	getFile("Jazz", title_dict, 349) #668
+	#getFile("Jazz", title_dict) #668
+	getFile("Funk%20--%20Soul", title_dict) #580
 
 	print("[INFO] Finished initialization")
 
 def get_status():
-	labels = ["POP", "HIP_HOP", "ROCK", "ELECTRONIC", "BLUES", "JAZZ", "CLASSICAL"]
+	labels = ["POP", "HIP_HOP", "ROCK", "ELECTRONIC", "BLUES", "JAZZ", "CLASSICAL", "FUNK"]
 	#  TODO:  and so on for the other categories...
 
 	label_dict = {}
@@ -156,7 +159,7 @@ def get_status():
 			percent = str(genre_amt_dict[i+1]*100 / total_titles)[:4]
 			s += f"{i+1}: {percent}% ({amt})   "
 
-	print(s)
+	print(s + "\n")
 
 get_status()
-#initialize()
+initialize()
