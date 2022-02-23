@@ -58,7 +58,7 @@ def getLyrics(link, genre, folder, song_dict):
 	orig_name = name
 	name = db_util.get_valid_filename(name)
 	if name is None:
-		print(f"[DEBUG] skipped {orig_name}")
+		#print(f"[DEBUG] skipped {orig_name}")
 		return
 			
 	ly = txt.split("data-lang=\"en\">")[1]
@@ -80,7 +80,7 @@ def getLyrics(link, genre, folder, song_dict):
 
 	# for valid names, write song lyrics if valid
 	if not db_util.is_content_valid(clean_ly):
-		print(f"[DEBUG] skipped {orig_name}, for content in non-English")
+		#print(f"[DEBUG] skipped {orig_name}, for content in non-English")
 		return
 
 	if name in song_dict:
@@ -103,13 +103,13 @@ def initialize():
 
 	title_dict = db_util.load_dict()
 
-	#getFile("Pop", title_dict) #1887
-	#getFile("Hip%20Hop", title_dict) #596
-	#getFile("Rock", title_dict) #2668
-	#getFile("Electronic", title_dict) #881
-	#getFile("Blues", title_dict) #217
-	#getFile("Classical", title_dict) #34
-	#getFile("Jazz", title_dict) #668
+	getFile("Pop", title_dict) #1887
+	getFile("Hip%20Hop", title_dict) #596
+	getFile("Rock", title_dict) #2668
+	getFile("Electronic", title_dict) #881
+	getFile("Blues", title_dict) #217
+	getFile("Classical", title_dict) #34
+	getFile("Jazz", title_dict) #668
 	getFile("Funk%20--%20Soul", title_dict) #580
 
 	print("[INFO] Finished initialization")
@@ -162,4 +162,4 @@ def get_status():
 	print(s + "\n")
 
 get_status()
-initialize()
+#initialize()
