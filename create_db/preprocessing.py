@@ -25,7 +25,8 @@ for i in range(1,8):
     for song in os.listdir(directory):
         #song.txt
         with open(directory+"/"+song, "r") as f:
-           lines = f.readlines()
+            lines = f.readlines()
+            print(song)
         chorDec = True
         isChorus = False
         isRep = False
