@@ -96,38 +96,41 @@ def is_song_file_valid(f):
 	content = f.read()
 	return is_content_valid(content) and (get_valid_filename(name) == name)
 
-# used to find songs with unwanted names/ contents/ etc.
-def get_invalid(label, criterion):
+# used to find paths of songs with unwanted names/ contents/ etc.
+def get_invalid(criterion, label):
 	folder_path = config.LABEL_TO_PATH[label]
-	bad_files_names = []
+	bad_files_paths = []
 	for filename in os.listdir(folder_path):
 		file_path = os.path.join(folder_path, filename)
 		if os.path.isfile(file_path):
 			f = open(str(file_path), "r")
 			if not criterion(f):
-				bad_files_names.append(filename)
+				bad_files_paths.append(file_path)
 				
-	return bad_files_names
+	return bad_files_paths
 
-def remove_invalid_songs(label):
+# used to delete paths of songs with unwanted names/ contents/ etc from label folder.
+def remove_invalid(criterion, label="all"):
+	if label=="all":
+		labels = config.LABELS
+	else:
+		labels = [label]
+
 	title_dict = load_dict()
-	label_folder = config.LABEL_TO_PATH[label]
+	for curr_label in labels:
+		invalid_fpaths = get_invalid(criterion, curr_label)
 
-	invalid_fnames = get_invalid(label, is_song_file_valid)
+		print(f"[INFO] Removing {len(invalid_fpaths)} invalid {curr_label} songs")
 
-	print(f"[INFO] Removing {len(invalid_fnames)} invalid {label} songs")
-
-	for fname in invalid_fnames:
-		curr_title = fname[:-4]
-		curr_path = os.path.join(label_folder, fname)
-
-		os.remove(curr_path)
-		if (title_dict[curr_title] == [label]):
-			del title_dict[curr_title]
-		else:
-			title_dict[curr_title].remove(label)
-		
-	save_dict(title_dict)
+		for fpath in invalid_fpaths:
+			curr_title = fpath.split("/")[-1][:-4]
+			os.remove(fpath)
+			if (title_dict[curr_title] == [curr_label]):
+				del title_dict[curr_title]
+			else:
+				title_dict[curr_title].remove(curr_label)
+			
+		save_dict(title_dict)
 
 # get titles of songs that doesn't have lyrics files from the dictionaries
 # used for fixing incorrect counting
