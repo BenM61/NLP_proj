@@ -51,7 +51,7 @@ for i in range(1,8):
                     if "X" in l or "REPEAT" in l:
                         for letter in l:
                             if letter.isdigit():
-                                repeat = int(letter) 
+                                repeat = max(int(letter)-1,1)
                     for j in range(0,repeat):
                         for c in chor:
                             new_song.append(c)
