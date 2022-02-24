@@ -33,6 +33,8 @@ for i in range(1,8):
         repBlock = []
         new_song = []
         repNum = 0
+        if len(lines) == 0:
+            continue
         if lines[-1] != "\n":
             lines.append("\n")
         for line in lines:
