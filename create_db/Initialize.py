@@ -142,8 +142,10 @@ def get_status():
 	print(s)
 
 	genre_amt_dict = {}
-	for v in db_util.load_dict().values():
+	for k, v in db_util.load_dict().items():
 		n = len(v)
+		#if n > 4:
+			#print(k)
 		if n not in genre_amt_dict:
 			genre_amt_dict[n] = 1
 		else:
