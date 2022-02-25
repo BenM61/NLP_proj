@@ -116,21 +116,22 @@ def remove_invalid(criterion, label="all"):
 	else:
 		labels = [label]
 
+	invalid_fpaths = []
 	title_dict = load_dict()
 	for curr_label in labels:
-		invalid_fpaths = get_invalid(criterion, curr_label)
+		curr_invalid = get_invalid(criterion, curr_label)
+		invalid_fpaths += curr_invalid
+		print(f"[INFO] Removing {len(curr_invalid)} invalid {curr_label} songs")
 
-		print(f"[INFO] Removing {len(invalid_fpaths)} invalid {curr_label} songs")
-
-		for fpath in invalid_fpaths:
-			curr_title = fpath.split("/")[-1][:-4]
-			os.remove(fpath)
-			if (title_dict[curr_title] == [curr_label]):
-				del title_dict[curr_title]
-			else:
-				title_dict[curr_title].remove(curr_label)
-			
-		save_dict(title_dict)
+	for fpath in invalid_fpaths:
+		curr_title = fpath.split("/")[-1][:-4]
+		os.remove(fpath)
+		if (title_dict[curr_title] == [curr_label]):
+			del title_dict[curr_title]
+		else:
+			title_dict[curr_title].remove(curr_label)
+		
+	save_dict(title_dict)
 
 # get titles of songs that doesn't have lyrics files from the dictionaries
 # used for fixing incorrect counting
