@@ -11,4 +11,3 @@ todo:
   2.2. too many dots --> "..."
   2.3. all files and with "\n"
   2.4. all files are divided to verses(?)
-3. remove classical songs

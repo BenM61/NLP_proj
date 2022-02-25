@@ -20,18 +20,17 @@ HIP_HOP_PATH = os.path.join(DB_PATH, "HIP_HOP")
 ELECTRONIC_PATH = os.path.join(DB_PATH, "ELECTRONIC")
 BLUES_PATH = os.path.join(DB_PATH, "BLUES")
 JAZZ_PATH = os.path.join(DB_PATH, "JAZZ")
-CLASSICAL_PATH = os.path.join(DB_PATH, "CLASSICAL")
 FUNK_PATH = os.path.join(DB_PATH, "FUNK")
 #  TODO:  and so on for the other categories...
 
 
-LABELS = ["POP", "HIP_HOP", "ROCK", "ELECTRONIC", "BLUES", "JAZZ", "CLASSICAL", "FUNK"]
+LABELS = ["POP", "HIP_HOP", "ROCK", "ELECTRONIC", "BLUES", "JAZZ", "FUNK"]
 #  TODO:  and so on for the other categories...
 
 GENRE_TO_LABEL = {"Pop" : "POP", "Hip%20Hop" : "HIP_HOP", "Rock" : "ROCK", "Funk%20--%20Soul" : "FUNK",
-"Electronic" : "ELECTRONIC", "Blues" : "BLUES", "Jazz" : "JAZZ", "Classical" : "CLASSICAL"}
+"Electronic" : "ELECTRONIC", "Blues" : "BLUES", "Jazz" : "JAZZ"}
 #  TODO:  and so on for the other categories...
 
 LABEL_TO_PATH = {"POP" : POP_PATH, "HIP_HOP" : HIP_HOP_PATH, "ROCK" : ROCK_PATH, "FUNK" : FUNK_PATH,
-"ELECTRONIC" : ELECTRONIC_PATH, "BLUES" : BLUES_PATH, "JAZZ" : JAZZ_PATH, "CLASSICAL" : CLASSICAL_PATH}
+"ELECTRONIC" : ELECTRONIC_PATH, "BLUES" : BLUES_PATH, "JAZZ" : JAZZ_PATH}
 #  TODO:  and so on for the other categories...

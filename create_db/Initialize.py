@@ -26,8 +26,6 @@ def getFile(Lyrics_genre, song_dict, start=1):
 			return
 		if Lyrics_genre == "Blues" and i > 217:
 			return
-		if Lyrics_genre == "Classical" and i > 34:
-			return
 		if Lyrics_genre == "Jazz" and i > 668:
 			return
 		if Lyrics_genre == "Funk%20--%20Soul" and i > 580:
@@ -108,7 +106,6 @@ def initialize():
 	getFile("Rock", title_dict) #2668
 	getFile("Electronic", title_dict) #881
 	getFile("Blues", title_dict) #217
-	getFile("Classical", title_dict) #34
 	getFile("Jazz", title_dict) #668
 	getFile("Funk%20--%20Soul", title_dict) #580
 
