@@ -3,7 +3,7 @@ import os
 #with open("create_db/Lyrics.txt", "a") as f:
 #        f.write(name)
 
-for i in range(1,2):
+for i in range(1,8):
     print(i)
     genre=""
     if (i==1):
@@ -17,13 +17,18 @@ for i in range(1,2):
     if (i==5):
         genre = "ROCK"
     if (i==6):
-        genre = "FUNK"  
+        genre = "FUNK"
+    if (i==7):
+        genre = "JAZZ"  
     
-    directory = "create_db/DB/"+"EXAMPLE"
+    directory = "create_db/DB/"+ genre
     for song in os.listdir(directory):
         #song.txt
         with open(directory+"/"+song, "r") as f:
-           lines = f.readlines()
+            print(song)
+            lines = f.readlines()
+        if (len(lines) == 0):
+            continue
         chorDec = True
         isChorus = False
         isRep = False
@@ -34,7 +39,7 @@ for i in range(1,2):
         if lines[-1] != "\n":
             lines.append("\n")
         for line in lines:
-            l = line.strip().replace("\n","").replace("[","").replace("(","").upper()
+            l = line.replace("\n","").replace("[","").replace("(","").strip().upper()
 
             #[chorus:]
             if l.startswith("CHORUS") or l.startswith("REPEAT CHORUS") or l.startswith("CHORUS:REPEAT"):
@@ -100,9 +105,3 @@ for i in range(1,2):
         with open(directory+"/"+song, "w") as f:
             for line in new_song:
                 f.write(line)
-
-
-
-
-   
-
