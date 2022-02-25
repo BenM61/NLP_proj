@@ -24,6 +24,10 @@ CLASSICAL_PATH = os.path.join(DB_PATH, "CLASSICAL")
 FUNK_PATH = os.path.join(DB_PATH, "FUNK")
 #  TODO:  and so on for the other categories...
 
+
+LABELS = ["POP", "HIP_HOP", "ROCK", "ELECTRONIC", "BLUES", "JAZZ", "CLASSICAL", "FUNK"]
+#  TODO:  and so on for the other categories...
+
 GENRE_TO_LABEL = {"Pop" : "POP", "Hip%20Hop" : "HIP_HOP", "Rock" : "ROCK", "Funk%20--%20Soul" : "FUNK",
 "Electronic" : "ELECTRONIC", "Blues" : "BLUES", "Jazz" : "JAZZ", "Classical" : "CLASSICAL"}
 #  TODO:  and so on for the other categories...

@@ -115,8 +115,7 @@ def initialize():
 	print("[INFO] Finished initialization")
 
 def get_status():
-	labels = ["POP", "HIP_HOP", "ROCK", "ELECTRONIC", "BLUES", "JAZZ", "CLASSICAL", "FUNK"]
-	#  TODO:  and so on for the other categories...
+	labels = config.LABELS
 
 	label_dict = {}
 	cnt = 0
