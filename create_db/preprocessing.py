@@ -37,7 +37,8 @@ def preprocess():
             if lines[-1] != "\n":
                 lines.append("\n")
             for line in lines:
-                l = line.replace("\n","").replace("[","").replace("(","").strip().upper()
+                line = line.replace("[","(").replace("]",")")
+                l = line.replace("\n","").replace("(","").strip().upper()
 
                 #[chorus:]
                 if l.startswith("CHORUS") or l.startswith("REPEAT CHORUS"):
@@ -100,16 +101,20 @@ def preprocess():
                         else:
                             repBlock.append(line)
 
+            if (new_song[-2] == "\n"):
+                new_song = new_song[:-1]
             with open(directory+"/"+song, "w") as f:
                 for line in new_song:
                     f.write(line)
 
-#check there is no text like [chorus] or [repeat] and this dong in only lyrics
+#check there is no text like [chorus] or [repeat] and this song is only lyrics
 # AFTER we have done the preprocess
 def no_chorus_no_repeat(song):
     lyrics = song.readlines()
+    if (len(lyrics) == 0):
+        return False
     for line in lyrics:
-        line = line.replace(" ","").upper()
+        line = line.upper()
         if "CHORUS" in line or "REPEAT" in line:
             return False
         for i in range(1,10):
