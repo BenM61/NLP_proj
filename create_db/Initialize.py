@@ -92,6 +92,7 @@ def getLyrics(link, genre, folder, song_dict):
 	song_path = os.path.join(folder, name + ".txt")
 	f = open(song_path, "w")
 	f.write(clean_ly)
+	f.close()
 
 def initialize():
 	urllib3.disable_warnings()

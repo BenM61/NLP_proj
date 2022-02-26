@@ -44,7 +44,7 @@ def load_dict():
 		title_file = open(config.TEMP_TITLES_GENRES_PATH, "rb")
 
 		title_dict = pickle.load(title_file)
-
+		title_file.close()
 	return title_dict
 
 # title- song title / genre list
@@ -54,6 +54,7 @@ def save_dict(title_dict):
 	title_file = open(config.TEMP_TITLES_GENRES_PATH, "wb")
 
 	pickle.dump(title_dict, title_file)
+	title_file.close()
 
 def is_char_valid(c):
 	c = str(c)
@@ -106,7 +107,7 @@ def get_invalid(criterion, label):
 			f = open(str(file_path), "r")
 			if not criterion(f):
 				bad_files_paths.append(file_path)
-				
+			f.close()
 	return bad_files_paths
 
 # used to delete paths of songs with unwanted names/ contents/ etc from label folder.
@@ -182,7 +183,7 @@ def get_version_distribution(title, title_dict=None):
 			contents[content].append(label)
 		else:
 			contents[content] = [label]
-
+		f.close()
 	return(contents.values())
 
 # get paths to all files that has duplicates
