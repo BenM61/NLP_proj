@@ -112,53 +112,12 @@ def initialize():
 
 	print("[INFO] Finished initialization")
 
-def get_status():
-	labels = config.LABELS
+def finalize_DB():
+	title_dict = db_util.load_dict()
+	db_util.save_dict(title_dict, config.TITLES_GENRES_PATH)
+	db_util.save_stats()
+	os.remove(config.TEMP_TITLES_GENRES_PATH)
 
-	label_dict = {}
-	cnt = 0
-	for label in labels:
-		folder_path = config.LABEL_TO_PATH[label]
-		curr_cnt = 0
-		if os.path.exists(folder_path):
-			for filename in os.listdir(folder_path):
-				file_path = os.path.join(folder_path, filename)
-				if os.path.isfile(file_path):
-					curr_cnt += 1
-
-		label_dict[label] = curr_cnt
-		cnt += curr_cnt
-	
-	label_dict["all"] = cnt
-	total_titles = len(db_util.load_dict().keys())
-	## making the content we want to write
-	s = "STATUS:\n"
-	s += "AMONUT OF ALL SONGS IN DATABASE (including duplicates): "+ str(label_dict["all"]) +"\n"
-	s += "AMONUT OF ALL SONGS IN DATABASE (excluding duplicates): "+ str(total_titles) +"\n\n"
-	for label in config.LABEL_TO_PATH.keys():
-		amt = label_dict[label]
-		percent = str(label_dict[label] * 100 / total_titles)[:4]
-		s += f"{label} songs: {percent}% ({amt})\n"
-		
-	print(s)
-
-	genre_amt_dict = {}
-	for k, v in db_util.load_dict().items():
-		n = len(v)
-		#if n > 4:
-			#print(k)
-		if n not in genre_amt_dict:
-			genre_amt_dict[n] = 1
-		else:
-			genre_amt_dict[n] += 1
-
-	s = f"Tag distribution: \n"
-	for i in range(len(genre_amt_dict.keys())):
-			amt = genre_amt_dict[i+1]
-			percent = str(genre_amt_dict[i+1]*100 / total_titles)[:4]
-			s += f"{i+1}: {percent}% ({amt})   "
-
-	print(s + "\n")
-
-get_status()
 #initialize()
+#finalize_DB()
+#print(db_util.get_status())

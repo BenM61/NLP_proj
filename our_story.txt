@@ -5,9 +5,12 @@ building the db:
 
 
 todo:
-1. no songs with over 3/4 tags
+1. no songs with over 3/4 tags                V
 2. preprocess-
-  2.1. chorus/ repeat
+  2.1. chorus/ repeat                         V
   2.2. too many dots --> "..."
-  2.3. all files and with "\n"
+  2.3. all files and with "\n"                V
   2.4. all files are divided to verses(?)
+3. shit ton of files -> dataset
+4. add function for max length for everything!
+5. tockenizer

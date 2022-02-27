@@ -3,42 +3,64 @@ import config
 import os
 import pickle
 
-def template():   
-	link = "https://www.azlyrics.com/lyrics/gabriellacilmi/sweetaboutme.html"
-	response = requests.get(link)
-	txt = response.text
-	txt = txt.split("Sorry about that. -->")[1]
-	txt = txt.split("<br><br>")[0]
-	txt = txt.replace("<br>","").replace("</div>","").replace("<div>","")
-	print(txt)
-	response.close()
+def get_status():
+	labels = config.LABELS
 
-def change_file(genre_dict, songs_dict):
+	label_dict = {}
+	cnt = 0
+	for label in labels:
+		folder_path = config.LABEL_TO_PATH[label]
+		curr_cnt = 0
+		if os.path.exists(folder_path):
+			for filename in os.listdir(folder_path):
+				file_path = os.path.join(folder_path, filename)
+				if os.path.isfile(file_path):
+					curr_cnt += 1
+
+		label_dict[label] = curr_cnt
+		cnt += curr_cnt
+	
+	label_dict["all"] = cnt
+	total_titles = len(load_dict().keys())
 	## making the content we want to write
-	contents = ["0" for i in range (0, 10)]
-	contents[0] = "SUM OF ALL SONGS IN DATABASE: "+ genre_dict["all"] +"\n"
-	contents[1] ="\n"
-	contents[2] = "Pop songs: " + genre_dict["Pop"] +"\n"
-	contents[3] = "Jazz songs: " + genre_dict["Jazz"] +"\n"
-	contents[4] = "Hiphop songs: " + genre_dict["Hiphop"] +"\n"
-	contents[5] = "Rock songs: " + genre_dict["Rock"] +"\n"
-	contents[6] = "Classical songs: " + genre_dict["Classical"] +"\n"
-	contents[7] = "R&b songs: " + genre_dict["R&b"] +"\n"
-	contents[8] = "Blues songs: " + genre_dict["Blues"] +"\n"
-	contents[9] = "Electronic songs: " + genre_dict["Electronic"] +"\n"
+	s = "STATUS:\n"
+	s += "AMONUT OF ALL SONGS IN DATABASE (including duplicates): "+ str(label_dict["all"]) +"\n"
+	s += "AMONUT OF ALL SONGS IN DATABASE (excluding duplicates): "+ str(total_titles) +"\n\n"
+	for label in config.LABEL_TO_PATH.keys():
+		amt = label_dict[label]
+		percent = str(label_dict[label] * 100 / total_titles)[:4]
+		s += f"{label} songs: {percent}% ({amt})\n"
 
-	## actually writing to the file 
-	f = open("create_db/genres.txt", "w")
-	new_file_contents = "".join(contents)
-	f.write(new_file_contents)
+	genre_amt_dict = {}
+	for v in load_dict().values():
+		n = len(v)
+		if n not in genre_amt_dict:
+			genre_amt_dict[n] = 1
+		else:
+			genre_amt_dict[n] += 1
+
+	s += f"\n\nTag distribution: \n"
+	for i in range(len(genre_amt_dict.keys())):
+			amt = genre_amt_dict[i+1]
+			percent = str(genre_amt_dict[i+1]*100 / total_titles)[:4]
+			s += f"{i+1}: {percent}% ({amt})   "
+
+	s += "\n"
+
+	return s
 
 # title- song title / genre list
 def load_dict():
 	# print("[DEBUG] loading temp dict")
 
-
 	title_dict = {}
 
+	if os.path.exists(config.TITLES_GENRES_PATH):
+		title_file = open(config.TITLES_GENRES_PATH, "rb")
+
+		title_dict = pickle.load(title_file)
+		title_file.close()
+		return title_dict
 
 	if os.path.exists(config.TEMP_TITLES_GENRES_PATH):
 		title_file = open(config.TEMP_TITLES_GENRES_PATH, "rb")
@@ -47,14 +69,18 @@ def load_dict():
 		title_file.close()
 	return title_dict
 
-# title- song title / genre list
-def save_dict(title_dict):
+# title dict- song title / genre list
+def save_dict(dict, path=config.TEMP_TITLES_GENRES_PATH):
 	# print("[DEBUG] saving temp dicts")
 
-	title_file = open(config.TEMP_TITLES_GENRES_PATH, "wb")
+	title_file = open(path, "wb")
 
-	pickle.dump(title_dict, title_file)
+	pickle.dump(dict, title_file)
 	title_file.close()
+
+def save_stats():
+	with open(config.OVERALL_STATS_PATH, "w") as f:
+		f.write(get_status())
 
 def is_char_valid(c):
 	c = str(c)
