@@ -36,8 +36,16 @@ def preprocess():
             repNum = 0
             if lines[-1] != "\n":
                 lines.append("\n")
+
             for line in lines:
                 line = line.replace("[","(").replace("]",")")
+                line = line.replace("..","...")
+                while True:
+                    if ("...." in line):
+                        line = line.replace("....","...")
+                    else:
+                        break
+
                 l = line.replace("\n","").replace("(","").strip().upper()
 
                 #[chorus:]
