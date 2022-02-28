@@ -8,4 +8,8 @@ TRAIN_PATH = os.path.join(ROOT_PATH, "TRAIN")
 
 TEST_PATH = os.path.join(ROOT_PATH, "TEST")
 
+# files for the metadata
+OVERALL_STATS_PATH = os.path.join(ROOT_PATH, "stats.txt")
+TITLES_GENRES_PATH = os.path.join(ROOT_PATH, "titles.pickle")
+
 TRAIN_TEST_SPLIT = 0.8
