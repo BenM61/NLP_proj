@@ -168,7 +168,8 @@ def remove_invalid(criterion, label="all", root=config_db.DB_PATH,
 	for curr_label in labels:
 		curr_invalid = get_invalid(criterion, curr_label, root)
 		invalid_fpaths += curr_invalid
-		print(f"[INFO] Removing {len(curr_invalid)} invalid {curr_label} songs \nfrom {root}")
+		if len(curr_invalid) > 0:
+			print(f"[INFO] Removing {len(curr_invalid)} invalid {curr_label} songs \nfrom {root}")
 
 	for fpath in invalid_fpaths:
 		curr_title = fpath.split(os.path.sep)[-1][:-4]
