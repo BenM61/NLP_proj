@@ -21,6 +21,7 @@ def copy_then_preprocess_song(from_path, root):
   preprocessing.preprocess(to_path)
 
 def create_datasets():
+  print(f"[INFO] Starts creating Datasets...")
   paths = []
   root = config_db.DB_PATH
   for folder_name in os.listdir(root):
@@ -36,6 +37,7 @@ def create_datasets():
   train_paths = paths[:split_ind]
   test_paths = paths[split_ind:]
 
+  print(f"[INFO] Copying and preprocessing song files...")
   # copy song files to new folders
   for path in train_paths:
     copy_then_preprocess_song(path, config.TRAIN_PATH)
@@ -43,6 +45,7 @@ def create_datasets():
   for path in test_paths:
     copy_then_preprocess_song(path, config.TEST_PATH)
 
+  print(f"[INFO] Removing invalid song files...")
   # remove invalid (after the preprocess) song files and update the title dict
   utils.remove_invalid(preprocessing.no_chorus_no_repeat, 
                       root=config.TRAIN_PATH, dict_file=config.TITLES_GENRES_PATH)
@@ -50,7 +53,7 @@ def create_datasets():
                       dict_file=config.TITLES_GENRES_PATH)
   # TODO: every check for valid files *after preprocess* should be here
 
-  # update stats
+  print(f"[INFO] Updating stats...")
   utils.save_datasets_stats(config.TRAIN_PATH, config.TEST_PATH, 
                           config.TITLES_GENRES_PATH, config.OVERALL_STATS_PATH)
 
