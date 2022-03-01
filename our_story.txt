@@ -14,3 +14,12 @@ todo:
 3. shit ton of files -> dataset
 4. add function for max length for everything!
 5. tockenizer
+
+how to transfer to the server:
+wsl:
+1. pip freeze > req.txt
+2. push (duh)
+server: 
+1. enter conda env (every time)
+2. conda install pip (once)
+3. pip install -r req.txt (whenever there are stuff to install)
