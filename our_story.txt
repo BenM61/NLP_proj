@@ -3,15 +3,18 @@ building the db:
 2. backup our files in text files, then upgraded to pickle
 3. the songs we use have reasonable names and are only in English (had to remove some of the early songs we added to ensure that)
 
+building datasets:
+1. at first we wanted to divide by files- its dumb (one song multiple files), so we
+divided by song titles
 
 todo:
 1. no songs with over 3/4 tags                V
 2. preprocess-
   2.1. chorus/ repeat                         V
-  2.2. too many dots --> "..."
+  2.2. too many dots --> "..."                V
   2.3. all files and with "\n"                V
   2.4. all files are divided to verses(?)
-3. shit ton of files -> dataset
+3. shit ton of files -> dataset               V
 4. add function for max length for everything!
 5. tockenizer
 

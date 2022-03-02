@@ -92,11 +92,12 @@ def create_datasets():
   return train_dataset, test_dataset
 
 
-delete_dataset_files()
+#delete_dataset_files()
+
 # dataloader example (we need shuffle to true)
 
-#from torch.utils.data import DataLoader
-#t, tt = create_datasets()
-#td = DataLoader(t, 4, False)
-#for i in next(iter(td)):
-#  print(i)
+from torch.utils.data import DataLoader
+t, tt = create_datasets()
+td = DataLoader(t, 4, False)
+for i in next(iter(td)):
+  print(i)
