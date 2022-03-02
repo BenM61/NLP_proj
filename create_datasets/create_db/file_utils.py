@@ -62,7 +62,7 @@ def get_status(root=config_db.DB_PATH, dict_path=config_db.TITLES_GENRES_PATH):
 	return s
 
 # title- song title / genre list
-def load_dict(path=config_db.TITLES_GENRES_PATH):
+def load_dict(path=config_db.TEMP_TITLES_GENRES_PATH):
 	# print("[DEBUG] loading temp dict")
 
 	title_dict = {}
@@ -72,20 +72,7 @@ def load_dict(path=config_db.TITLES_GENRES_PATH):
 
 		title_dict = pickle.load(title_file)
 		title_file.close()
-		return title_dict
 
-	if os.path.exists(config_db.TITLES_GENRES_PATH):
-		title_file = open(config_db.TITLES_GENRES_PATH, "rb")
-
-		title_dict = pickle.load(title_file)
-		title_file.close()
-		return title_dict
-
-	if os.path.exists(config_db.TEMP_TITLES_GENRES_PATH):
-		title_file = open(config_db.TEMP_TITLES_GENRES_PATH, "rb")
-
-		title_dict = pickle.load(title_file)
-		title_file.close()
 	return title_dict
 
 # title dict- song title / genre list
@@ -168,8 +155,6 @@ def remove_invalid(criterion, label="all", root=config_db.DB_PATH,
 	for curr_label in labels:
 		curr_invalid = get_invalid(criterion, curr_label, root)
 		invalid_fpaths += curr_invalid
-		if len(curr_invalid) > 0:
-			print(f"[INFO] Removing {len(curr_invalid)} invalid {curr_label} songs \nfrom {root}")
 
 	for fpath in invalid_fpaths:
 		curr_title = fpath.split(os.path.sep)[-1][:-4]
@@ -217,7 +202,7 @@ def remove_ghost_songs(label):
 # to list of genres it's in
 def get_version_distribution(title, title_dict=None):
 	if title_dict is None:
-		title_dict = load_dict()
+		title_dict = load_dict(config_db.TITLES_GENRES_PATH)
 
 	labels = title_dict[title]
 	contents = {}
@@ -272,22 +257,44 @@ def remove_duplicates():
 		
 	save_dict(title_dict)
 
-def get_datasets_status(train_root, test_root, dict_path):
-	combined_label_dict = {}
-	combined_cnt = 0
+def get_datasets_status(datasets_title_dict):
+	cnt = len(datasets_title_dict.keys())
+	
+	label_dict = {}
+	# count song amount per label
+	for title in datasets_title_dict.keys():
+		for label in datasets_title_dict[title]:
+			if label in label_dict:
+				label_dict[label] += 1
+			else:
+				label_dict[label] = 1
 
-	cnt1, label_dict1 = get_label_counts(train_root)
-	cnt2, label_dict2 = get_label_counts(test_root)
-	total_titles, genre_amt_dict = get_tag_distribution(dict_path)
+	# calculate distribution of label amount
+	distribution = {}
+	for title in datasets_title_dict.keys():
+		n = len(datasets_title_dict[title])
+		if n in distribution:
+			distribution[n] += 1
+		else: 
+			distribution[n] = 1
 
-	for label in label_dict1.keys():
-		combined_label_dict[label] = label_dict1[label] + label_dict2[label]
-	combined_cnt = cnt1 + cnt2
+	# set the status message
+	s = "STATUS:\n" + f"AMONUT OF ALL SONGS IN DATABASE: {cnt}\n\n"
+	for label in label_dict.keys():
+		amt = label_dict[label]
+		percent = str(label_dict[label] * 100 / cnt)[:4]
+		s += f"{label} songs: {percent}% ({amt})\n"
+	s += "NOTE: the precentages go above 100 because a song can have more than one genre\n"
 
-	s = get_status_message(combined_cnt, total_titles, combined_label_dict, genre_amt_dict)
+	s += f"\n\nTag distribution: \n"
+	for i in range(len(distribution.keys())):
+			amt = distribution[i+1]
+			percent = str(distribution[i+1]*100 / cnt)[:4]
+			s += f"{i+1}: {percent}% ({amt})   "
 
+	s += "\n"
 	return s
 
-def save_datasets_stats(train_root, test_root, dict_path, to_path):
-	with open(to_path, "w") as f:
-		f.write(get_datasets_status(train_root, test_root, dict_path))
+def save_datasets_stats(stats_file_path, datasets_title_dict):
+	with open(stats_file_path, "w") as f:
+		f.write(get_datasets_status(datasets_title_dict))
