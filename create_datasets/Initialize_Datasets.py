@@ -1,6 +1,6 @@
 from create_db import config_db
 import create_db.file_utils as utils
-import config
+import config_dataset as config
 from LyricsDataset import LyricsDataset
 import preprocessing
 

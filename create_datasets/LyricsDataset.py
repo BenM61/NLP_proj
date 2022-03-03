@@ -1,5 +1,5 @@
 import os
-import config
+import config_dataset as config
 from torch.utils.data import Dataset
 
 
