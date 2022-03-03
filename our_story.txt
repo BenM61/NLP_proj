@@ -24,5 +24,8 @@ wsl:
 2. push (duh)
 server: 
 1. enter conda env (every time)
+1.1 conda env list (see if it exists)
+1.2 conda create --name tempy [then y]
+1.3 conda activate tempy
 2. conda install pip (once)
 3. pip install -r req.txt (whenever there are stuff to install)
