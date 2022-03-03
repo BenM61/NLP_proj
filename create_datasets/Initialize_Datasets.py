@@ -94,7 +94,7 @@ def create_datasets():
 
 #delete_dataset_files()
 
-# dataloader example (we need shuffle to true)
+# dataloader example (we need shuffle to true only on train)
 
 from torch.utils.data import DataLoader
 t, tt = create_datasets()
