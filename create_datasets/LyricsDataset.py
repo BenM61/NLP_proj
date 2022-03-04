@@ -1,5 +1,5 @@
 import os
-import config_dataset as config
+from create_datasets import config_dataset as config
 from torch.utils.data import Dataset
 
 
@@ -16,10 +16,11 @@ class LyricsDataset(Dataset):
 		unpadded_labels = title_dict[title]
 		return unpadded_labels + [""] * (5 - len(unpadded_labels))
 
-	def __init__(self, title_dict, songs_paths):
+	def __init__(self, title_dict, songs_paths, ignore_titles):
 		super(LyricsDataset, self).__init__()
 
 		self.num_songs = len(songs_paths)
+		self.ignore_titles = ignore_titles
 		self.titles = []
 		self.lyrics = []
 		self.labels = []
@@ -36,4 +37,7 @@ class LyricsDataset(Dataset):
 		return self.num_songs
 	
 	def __getitem__(self, index):
-		return tuple(self.titles[index], self.lyrics[index]), self.labels[index]
+		if self.ignore_titles:
+			return self.lyrics[index], self.labels[index]
+		else:
+			return (self.titles[index], self.lyrics[index]), self.labels[index]

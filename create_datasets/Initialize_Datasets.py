@@ -1,8 +1,8 @@
-from create_db import config_db
-import create_db.file_utils as utils
-import config_dataset as config
-from LyricsDataset import LyricsDataset
-import preprocessing
+from .create_db import config_db
+from .create_db import file_utils as utils
+from create_datasets import config_dataset as config
+from create_datasets.LyricsDataset import LyricsDataset
+import create_datasets.preprocessing as preprocessing
 
 import os
 import random
@@ -46,7 +46,7 @@ def copy_then_preprocess_song(from_path, target_root,
 
   return valid, to_path
 
-def create_datasets():
+def create_datasets(ignore_titles=True):
   print(f"[INFO] Starts creating Datasets...")
   if os.path.exists(config.TITLES_GENRES_PATH):
     print(f"[INFO] Loading saved files for datasets...")
@@ -86,18 +86,7 @@ def create_datasets():
   test_paths = paths[split_ind:]
 
   # make the dataset objects
-  train_dataset = LyricsDataset(datasets_title_dict, train_paths)
-  test_dataset = LyricsDataset(datasets_title_dict, test_paths)
+  train_dataset = LyricsDataset(datasets_title_dict, train_paths, ignore_titles)
+  test_dataset = LyricsDataset(datasets_title_dict, test_paths, ignore_titles)
 
   return train_dataset, test_dataset
-
-
-#delete_dataset_files()
-
-# dataloader example (we need shuffle to true only on train)
-
-from torch.utils.data import DataLoader
-t, tt = create_datasets()
-td = DataLoader(t, 4, False)
-for i in next(iter(td)):
-  print(i)
