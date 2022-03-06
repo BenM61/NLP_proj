@@ -29,3 +29,11 @@ server:
 1.3 conda activate tempy
 2. conda install pip (once)
 3. pip install -r req.txt (whenever there are stuff to install)
+
+set up job:
+1. change the python file path in myjob.slurm
+2. sbatch myjob.slurm
+
+optional:
+squeue --me # view only your jobs on the queue
+sbatch myjob.slurm --test-only # view when it will start and with how many proccessors
