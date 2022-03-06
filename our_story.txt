@@ -36,4 +36,4 @@ set up job:
 
 optional:
 squeue --me # view only your jobs on the queue
-sbatch myjob.slurm --test-only # view when it will start and with how many proccessors
+sbatch --test-only myjob.slurm # view when it will start and with how many proccessors
