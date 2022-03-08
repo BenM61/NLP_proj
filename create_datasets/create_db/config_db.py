@@ -8,7 +8,7 @@ DB_PATH = os.path.join(ROOT_PATH, "DB")
 
 # files for the metadata
 OVERALL_STATS_PATH = os.path.join(DB_PATH, "stats.txt")
-TITLES_GENRES_PATH = os.path.join(DB_PATH, "titles.txt")
+TITLES_GENRES_PATH = os.path.join(DB_PATH, "titles.pickle")
 
 # temp files to set the metadata 
 TEMP_TITLES_GENRES_PATH = os.path.join(DB_PATH, "temp_titles.pickle")

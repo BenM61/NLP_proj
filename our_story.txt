@@ -3,11 +3,37 @@ building the db:
 2. backup our files in text files, then upgraded to pickle
 3. the songs we use have reasonable names and are only in English (had to remove some of the early songs we added to ensure that)
 
+building datasets:
+1. at first we wanted to divide by files- its dumb (one song multiple files), so we
+divided by song titles
 
 todo:
-1. no songs with over 3/4 tags
+1. no songs with over 3/4 tags                V
 2. preprocess-
-  2.1. chorus/ repeat
-  2.2. too many dots --> "..."
-  2.3. all files and with "\n"
+  2.1. chorus/ repeat                         V
+  2.2. too many dots --> "..."                V
+  2.3. all files and with "\n"                V
   2.4. all files are divided to verses(?)
+3. shit ton of files -> dataset               V
+4. add function for max length for everything!
+5. tockenizer
+
+how to transfer to the server:
+wsl:
+1. pip freeze > req.txt
+2. push (duh)
+server: 
+1. enter conda env (every time)
+1.1 conda env list (see if it exists)
+1.2 conda create --name tempy [then y]
+1.3 conda activate tempy
+2. conda install pip (once)
+3. pip install -r req.txt (whenever there are stuff to install)
+
+set up job:
+1. change the python file path in myjob.slurm
+2. sbatch myjob.slurm
+
+optional:
+squeue --me # view only your jobs on the queue
+sbatch --test-only myjob.slurm # view when it will start and with how many proccessors

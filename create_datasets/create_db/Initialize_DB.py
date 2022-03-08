@@ -1,12 +1,12 @@
 import requests 
-import db_util
+import file_utils
 import urllib3
-import config
+import config_db
 import os
 
 def getFile(Lyrics_genre, song_dict, start=1):
-	genre_label = config.GENRE_TO_LABEL[Lyrics_genre]
-	genre_folder = config.LABEL_TO_PATH[genre_label]
+	genre_label = config_db.GENRE_TO_LABEL[Lyrics_genre]
+	genre_folder = config_db.LABEL_TO_PATH[genre_label]
 
 	if not os.path.exists(genre_folder):
 		os.makedirs(genre_folder)
@@ -41,7 +41,7 @@ def getFile(Lyrics_genre, song_dict, start=1):
 			getLyrics(c, genre_label, genre_folder, song_dict) 
 
 		# update dicts after each page
-		db_util.save_dict(song_dict)
+		file_utils.save_dict(song_dict)
 		
 def getLyrics(link, genre, folder, song_dict):
 	link = "https://www.lyrics.com/" + link
@@ -54,7 +54,7 @@ def getLyrics(link, genre, folder, song_dict):
 
 	# don't deal with titles that are invalid filenames
 	orig_name = name
-	name = db_util.get_valid_filename(name)
+	name = file_utils.get_valid_filename(name)
 	if name is None:
 		#print(f"[DEBUG] skipped {orig_name}")
 		return
@@ -77,7 +77,7 @@ def getLyrics(link, genre, folder, song_dict):
 	response.close()
 
 	# for valid names, write song lyrics if valid
-	if not db_util.is_content_valid(clean_ly):
+	if not file_utils.is_content_valid(clean_ly):
 		#print(f"[DEBUG] skipped {orig_name}, for content in non-English")
 		return
 
@@ -97,10 +97,10 @@ def getLyrics(link, genre, folder, song_dict):
 def initialize():
 	urllib3.disable_warnings()
 
-	if not os.path.exists(config.DB_PATH):
-		os.makedirs(config.DB_PATH)
+	if not os.path.exists(config_db.DB_PATH):
+		os.makedirs(config_db.DB_PATH)
 
-	title_dict = db_util.load_dict()
+	title_dict = file_utils.load_dict()
 
 	getFile("Pop", title_dict) #1887
 	getFile("Hip%20Hop", title_dict) #596
@@ -112,53 +112,12 @@ def initialize():
 
 	print("[INFO] Finished initialization")
 
-def get_status():
-	labels = config.LABELS
+def finalize_DB():
+	title_dict = file_utils.load_dict()
+	file_utils.save_dict(title_dict, config_db.TITLES_GENRES_PATH)
+	file_utils.save_stats()
+	os.remove(config_db.TEMP_TITLES_GENRES_PATH)
 
-	label_dict = {}
-	cnt = 0
-	for label in labels:
-		folder_path = config.LABEL_TO_PATH[label]
-		curr_cnt = 0
-		if os.path.exists(folder_path):
-			for filename in os.listdir(folder_path):
-				file_path = os.path.join(folder_path, filename)
-				if os.path.isfile(file_path):
-					curr_cnt += 1
-
-		label_dict[label] = curr_cnt
-		cnt += curr_cnt
-	
-	label_dict["all"] = cnt
-	total_titles = len(db_util.load_dict().keys())
-	## making the content we want to write
-	s = "STATUS:\n"
-	s += "AMONUT OF ALL SONGS IN DATABASE (including duplicates): "+ str(label_dict["all"]) +"\n"
-	s += "AMONUT OF ALL SONGS IN DATABASE (excluding duplicates): "+ str(total_titles) +"\n\n"
-	for label in config.LABEL_TO_PATH.keys():
-		amt = label_dict[label]
-		percent = str(label_dict[label] * 100 / total_titles)[:4]
-		s += f"{label} songs: {percent}% ({amt})\n"
-		
-	print(s)
-
-	genre_amt_dict = {}
-	for k, v in db_util.load_dict().items():
-		n = len(v)
-		#if n > 4:
-			#print(k)
-		if n not in genre_amt_dict:
-			genre_amt_dict[n] = 1
-		else:
-			genre_amt_dict[n] += 1
-
-	s = f"Tag distribution: \n"
-	for i in range(len(genre_amt_dict.keys())):
-			amt = genre_amt_dict[i+1]
-			percent = str(genre_amt_dict[i+1]*100 / total_titles)[:4]
-			s += f"{i+1}: {percent}% ({amt})   "
-
-	print(s + "\n")
-
-get_status()
 #initialize()
+#finalize_DB()
+#print(file_utils.get_status())
