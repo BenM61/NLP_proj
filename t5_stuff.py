@@ -13,6 +13,8 @@ import numpy as np
 
 from create_datasets.Initialize_Datasets import create_datasets
 
+print("started")
+
 class Config:
     def __init__(self):
         super(Config, self).__init__()
@@ -20,7 +22,7 @@ class Config:
         self.SEED = 42
 
         # data
-        self.TOKENIZER = T5Tokenizer.from_pretrained("t5-base")
+        self.TOKENIZER = T5Tokenizer.from_pretrained("t5-small")
         self.SRC_MAX_LENGTH = 1500
         self.TGT_MAX_LENGTH = 30
         self.BATCH_SIZE = 16
@@ -39,7 +41,7 @@ class T5Model(nn.Module): # ****************************************************
     def __init__(self):
         super(T5Model, self).__init__()
 
-        self.t5_model = T5ForConditionalGeneration.from_pretrained("t5-base")
+        self.t5_model = T5ForConditionalGeneration.from_pretrained("t5-small")
 
     def forward(
         self,
