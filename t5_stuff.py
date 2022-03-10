@@ -90,14 +90,11 @@ def val(model, val_dataloader, criterion):
 	model.eval()
 	
 	for step, batch in enumerate(val_dataloader):
-	
-		if step > 0:
-			break
 		# unpack the batch contents and push them to the device (cuda or cpu).
-		ly_ids = batch["lyrics"]["input_ids"].squeeze(0).long().to(config.DEVICE)
-		ly_mask = batch["lyrics"]["attention_mask"].squeeze(0).long().to(config.DEVICE)
-		la_ids = batch["labels"]['input_ids'].squeeze(0).long().to(config.DEVICE)
-		la_mask = batch["labels"]["attention_mask"].squeeze(0).long().to(config.DEVICE)
+		ly_ids = batch["lyrics"]["input_ids"].squeeze(1).long().to(config.DEVICE)
+		ly_mask = batch["lyrics"]["attention_mask"].squeeze(1).long().to(config.DEVICE)
+		la_ids = batch["labels"]['input_ids'].squeeze(1).long().to(config.DEVICE)
+		la_mask = batch["labels"]["attention_mask"].squeeze(1).long().to(config.DEVICE)
 	
 		la_ids_after_replace = la_mask
 		# replace pad tokens with -100
@@ -130,13 +127,16 @@ def val(model, val_dataloader, criterion):
 				pred_decoded = config.TOKENIZER.decode(pred_id)
 				pred.append(pred_decoded)
 
-	print(pred)
 	true_ohe = get_ohe(true)
 	pred_ohe = get_ohe(pred)
 
 	avg_val_loss = val_loss / len(val_dataloader)
 	print('Val loss:', avg_val_loss)
 	print('Val accuracy:', accuracy_score(true_ohe, pred_ohe))
+
+	print(true_ohe)
+	print(pred_ohe)
+
 
 	val_micro_f1_score = f1_score(true_ohe, pred_ohe, average='micro')
 	print('Val micro f1 score:', val_micro_f1_score)
@@ -149,17 +149,14 @@ def train(model, train_dataloader, val_dataloader, criterion, optimizer, schedul
 	for step, batch in enumerate(tqdm(train_dataloader, 
 									  desc='Epoch ' + str(epoch))):
 
-		if step > 0:
-			break
-
 		# set model.train() every time during training
 		model.train()
 
 		# unpack the batch contents and push them to the device (cuda or cpu).
-		ly_ids = batch["lyrics"]["input_ids"].squeeze(0).long().to(config.DEVICE)
-		ly_mask = batch["lyrics"]["attention_mask"].squeeze(0).long().to(config.DEVICE)
-		la_ids = batch["labels"]['input_ids'].squeeze(0).long().to(config.DEVICE)
-		la_mask = batch["labels"]["attention_mask"].squeeze(0).long().to(config.DEVICE)
+		ly_ids = batch["lyrics"]["input_ids"].squeeze(1).long().to(config.DEVICE)
+		ly_mask = batch["lyrics"]["attention_mask"].squeeze(1).long().to(config.DEVICE)
+		la_ids = batch["labels"]['input_ids'].squeeze(1).long().to(config.DEVICE)
+		la_mask = batch["labels"]["attention_mask"].squeeze(1).long().to(config.DEVICE)
 	
 		# replace pad tokens with -100
 		la_ids[la_ids[:, :] == config.TOKENIZER.pad_token_id] = -100
@@ -195,7 +192,7 @@ def run():
 
 	train_ds, test_ds = create_datasets(False)
 
-	bs = 1
+	bs = 2
 	train_dataloader = DataLoader(train_ds, bs, True)
 	val_dataloader = DataLoader(test_ds, bs, False)
 
