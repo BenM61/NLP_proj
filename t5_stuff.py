@@ -13,6 +13,8 @@ import numpy as np
 
 from create_datasets.Initialize_Datasets import create_datasets
 
+print("started")
+
 class Config:
 	def __init__(self):
 		super(Config, self).__init__()
