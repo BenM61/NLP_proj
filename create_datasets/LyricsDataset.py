@@ -66,7 +66,7 @@ class LyricsDataset(Dataset):
 			raw_lyrics, lyrics = self._get_lyrics(path)
 			raw_label, label = self._get_labels(title_dict, path)
 
-			raw_title = self._get_title(path).replace("_", " ")
+			raw_title = self._get_title(path)
 
 			if tokenize:
 				# remove songs with very long tokenization
