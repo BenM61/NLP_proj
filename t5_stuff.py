@@ -258,25 +258,4 @@ def run():
 
 	return best_model, best_val_micro_f1_score
 
-def run():
-	config = Config()
-	model = T5Model()
-	model = torch.nn.DataParallel(model)
-
-	model.to(config.DEVICE)
-
-	train_ds, test_ds = create_datasets(ignore_titles=False)
-
-	bs = 1
-	train_dataloader = DataLoader(train_ds, bs, True)
-	val_dataloader = DataLoader(test_ds, bs, False)
-
-	# setting a seed ensures reproducible results.
-	# seed may affect the performance too.
-	torch.manual_seed(config.SEED)
-
-	criterion = nn.BCEWithLogitsLoss()
-
-	return 
-
 best_model, best_val_micro_f1_score = run()
