@@ -76,12 +76,12 @@ class T5Model(nn.Module): # ****************************************************
 
 # textual predictions to one hot
 def get_ohe(x):
-	labels_li = ["POP", "HIP_HOP", "ROCK", "ELECTRONIC", "BLUES", "JAZZ", "FUNK"]
+	labels_li = ["POP","HIP_HOP", "ROCK", "ELECTRONIC", "BLUES", "JAZZ", "FUNK"]
 	labels_li_indices = dict()
 	for idx, label in enumerate(labels_li):
 		labels_li_indices[label] = idx
 		
-	y = [labels.split(',') for labels in x]
+	y = [labels.replace(" ","").split(',') for labels in x]
 	ohe = []
 	for labels in y:
 		temp = [0] * 7
