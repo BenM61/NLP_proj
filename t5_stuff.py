@@ -81,10 +81,10 @@ def get_ohe(x):
 	for idx, label in enumerate(labels_li):
 		labels_li_indices[label] = idx
 		
-	y = [labels.split(', ') for labels in x]
+	y = [labels.split(',') for labels in x]
 	ohe = []
 	for labels in y:
-		temp = [0] * 6
+		temp = [0] * 7
 		for label in labels:
 			idx = labels_li_indices.get(label, -1)
 			if idx != -1:
@@ -257,5 +257,26 @@ def run():
 				max_val_micro_f1_score = val_micro_f1_score
 
 	return best_model, best_val_micro_f1_score
+
+def run():
+	config = Config()
+	model = T5Model()
+	model = torch.nn.DataParallel(model)
+
+	model.to(config.DEVICE)
+
+	train_ds, test_ds = create_datasets(ignore_titles=False)
+
+	bs = 1
+	train_dataloader = DataLoader(train_ds, bs, True)
+	val_dataloader = DataLoader(test_ds, bs, False)
+
+	# setting a seed ensures reproducible results.
+	# seed may affect the performance too.
+	torch.manual_seed(config.SEED)
+
+	criterion = nn.BCEWithLogitsLoss()
+
+	return 
 
 best_model, best_val_micro_f1_score = run()
