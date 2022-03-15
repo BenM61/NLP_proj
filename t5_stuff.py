@@ -81,7 +81,7 @@ def get_ohe(x):
 	ohe = np.array(ohe)
 	return ohe
 
-def val(model, val_dataloader, criterion):
+def val(model, val_dataloader):
 	
 	config=Config()
 
