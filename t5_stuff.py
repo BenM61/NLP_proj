@@ -202,9 +202,8 @@ def run():
 
 	train_ds, test_ds = create_datasets(False)
 
-	bs = 8
-	train_dataloader = DataLoader(train_ds, bs, True)
-	val_dataloader = DataLoader(test_ds, bs, False)
+	train_dataloader = DataLoader(train_ds, config.BATCH_SIZE, True)
+	val_dataloader = DataLoader(test_ds, config.BATCH_SIZE, False)
 
 	# setting a seed ensures reproducible results.
 	# seed may affect the performance too.
