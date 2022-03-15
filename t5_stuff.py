@@ -14,18 +14,8 @@ import numpy as np
 
 from create_datasets.Initialize_Datasets import create_datasets
 
-def get_gpu_allocated_size():
-		"""Inspect cached/reserved and allocated memory on specified gpus and return the id of the less used device"""
-		gpus = range(cuda.device_count())
-		# check gpus arg VS available gpus
-		sys_gpus = list(range(cuda.device_count()))
-
-		cur_allocated_mem = {}
-
-		for i in gpus:
-				cur_allocated_mem[i] = cuda.memory_allocated(i)
-
-		print('Current allocated memory:', {f'cuda:{k}': v for k, v in cur_allocated_mem.items()})
+def get_gpus():
+		print(f"There are {cuda.device_count()} gpus")
 
 class Config:
 	def __init__(self):
@@ -164,8 +154,6 @@ def train(model, train_dataloader, val_dataloader, optimizer, scheduler, epoch):
 		la_ids = batch["labels"]['input_ids'].squeeze(1).long().to(config.DEVICE)
 		la_mask = batch["labels"]["attention_mask"].squeeze(1).long().to(config.DEVICE)
 	
-		get_gpu_allocated_size()
-
 		# replace pad tokens with -100
 		la_ids[la_ids[:, :] == config.TOKENIZER.pad_token_id] = -100
 
@@ -195,6 +183,8 @@ def run():
 	config = Config()
 	model = T5Model()
 	model = torch.nn.DataParallel(model)
+	
+	get_gpus()
 
 	model.to(config.DEVICE)
 
