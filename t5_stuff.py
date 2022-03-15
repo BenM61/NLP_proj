@@ -37,14 +37,12 @@ class Config:
 		self.TOKENIZER = T5Tokenizer.from_pretrained("t5-small")
 		self.SRC_MAX_LENGTH = 1500
 		self.TGT_MAX_LENGTH = 30
-		self.BATCH_SIZE = 16
+		self.BATCH_SIZE = 8
 
 		# model
 		self.DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 		self.FULL_FINETUNING = True
 		self.LR = 3e-5
-		self.OPTIMIZER = 'AdamW'
-		self.CRITERION = 'BCEWithLogitsLoss'
 		self.SAVE_BEST_ONLY = True
 		self.N_VALIDATE_DUR_TRAIN = 3
 		self.EPOCHS = 3
@@ -151,7 +149,7 @@ def val(model, val_dataloader, criterion):
 	print('Val micro f1 score:', val_micro_f1_score)
 	return val_micro_f1_score
 
-def train(model, train_dataloader, val_dataloader, criterion, optimizer, scheduler, epoch):
+def train(model, train_dataloader, val_dataloader, optimizer, scheduler, epoch):
 	config=Config()
 
 	train_loss = 0
@@ -202,15 +200,12 @@ def run():
 
 	train_ds, test_ds = create_datasets(False)
 
-	bs = 8
-	train_dataloader = DataLoader(train_ds, bs, True)
-	val_dataloader = DataLoader(test_ds, bs, False)
+	train_dataloader = DataLoader(train_ds, config.BATCH_SIZE, True)
+	val_dataloader = DataLoader(test_ds, config.BATCH_SIZE, False)
 
 	# setting a seed ensures reproducible results.
 	# seed may affect the performance too.
 	torch.manual_seed(config.SEED)
-
-	criterion = nn.BCEWithLogitsLoss()
 
 	# define the parameters to be optmized -
 	# - and add regularization
@@ -242,8 +237,8 @@ def run():
 
 	max_val_micro_f1_score = float('-inf')
 	for epoch in range(config.EPOCHS):
-		train(model, train_dataloader, val_dataloader, criterion, optimizer, scheduler, epoch)
-		val_micro_f1_score = val(model, val_dataloader, criterion)
+		train(model, train_dataloader, val_dataloader, optimizer, scheduler, epoch)
+		val_micro_f1_score = val(model, val_dataloader)
 
 		if config.SAVE_BEST_ONLY:
 			if val_micro_f1_score > max_val_micro_f1_score:
