@@ -1,0 +1,9 @@
+STATUS:
+AMONUT OF ALL SONGS IN DATABASE (including duplicates): 3626
+AMONUT OF ALL SONGS IN DATABASE (excluding duplicates): 3626
+
+POP songs: 100.% (3626)
+
+
+Tag distribution: 
+1: 100.% (3626)   

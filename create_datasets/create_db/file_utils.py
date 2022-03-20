@@ -1,5 +1,5 @@
 import requests
-from . import config_db
+import config_db
 import os
 import pickle
 

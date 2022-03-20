@@ -4,7 +4,7 @@ import os
 # path of the root folder
 ROOT_PATH = Path(os.path.realpath(__file__)).parent
 
-DB_PATH = os.path.join(ROOT_PATH, "DB")
+DB_PATH = os.path.join(ROOT_PATH, "DB2")
 
 # files for the metadata
 OVERALL_STATS_PATH = os.path.join(DB_PATH, "stats.txt")
