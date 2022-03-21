@@ -1,9 +1,10 @@
 STATUS:
-AMONUT OF ALL SONGS IN DATABASE (including duplicates): 3626
-AMONUT OF ALL SONGS IN DATABASE (excluding duplicates): 3626
+AMONUT OF ALL SONGS IN DATABASE (including duplicates): 5338
+AMONUT OF ALL SONGS IN DATABASE (excluding duplicates): 1712
 
-POP songs: 100.% (3626)
+HIP_HOP songs: 100.% (1712)
+POP songs: 211.% (3626)
 
 
 Tag distribution: 
-1: 100.% (3626)   
+1: 100.% (1712)   

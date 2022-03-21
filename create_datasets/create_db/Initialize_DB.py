@@ -12,7 +12,7 @@ def getFile(Lyrics_genre, song_dict, start=0):
 	if not os.path.exists(genre_folder):
 		os.makedirs(genre_folder)
 
-	for i in range (start, 2000, 4):
+	for i in range (516, 2000):
 		main_link = "https://www.lyrics.com/genre/" + Lyrics_genre
 
 		print(f"[INFO] Current page: {i}, current genre: {genre_label}")
@@ -30,6 +30,8 @@ def getFile(Lyrics_genre, song_dict, start=0):
 		if Lyrics_genre == "Jazz" and i > 668:
 			return
 		if Lyrics_genre == "Funk%20--%20Soul" and i > 580:
+			return
+		if Lyrics_genre == "Rock" and i > 2667:
 			return
 
 		content = requests.get(main_link, verify=False)
@@ -109,8 +111,8 @@ def initialize():
 
 	title_dict = file_utils.load_dict()
 
-	getFile("Pop", title_dict) #1887
-	#getFile("Hip%20Hop", title_dict) #596
+	#getFile("Pop", title_dict) #1887
+	getFile("Hip%20Hop", title_dict) #596
 	#getFile("Rock", title_dict) #2668
 	#getFile("Electronic", title_dict) #881
 	#getFile("Blues", title_dict) #217
