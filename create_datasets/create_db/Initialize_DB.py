@@ -12,7 +12,7 @@ def getFile(Lyrics_genre, song_dict, start=0):
 	if not os.path.exists(genre_folder):
 		os.makedirs(genre_folder)
 
-	for i in range (516, 2000):
+	for i in range (start, 2000):
 		main_link = "https://www.lyrics.com/genre/" + Lyrics_genre
 
 		print(f"[INFO] Current page: {i}, current genre: {genre_label}")
@@ -45,7 +45,7 @@ def getFile(Lyrics_genre, song_dict, start=0):
 
 		# update dicts after each page
 		file_utils.save_dict(song_dict)
-		
+
 def getLyrics(link, genre, folder, song_dict):
 	link = "https://www.lyrics.com/" + link
 	response = requests.get(link, verify=False)
@@ -94,6 +94,11 @@ def getLyrics(link, genre, folder, song_dict):
 		if genre in song_dict[name]: # exist in db
 			return
 		else: # exist on another genre
+			p = os.path.join(config_db.LABEL_TO_PATH[song_dict[name][0]], name + ".txt")
+			with open(p, 'r') as file:
+				old = file.read().strip()
+				if (old != clean_ly.strip()): #diff song with same name!
+					return
 			song_dict[name] = song_dict[name] + [genre]
 	else:
 		song_dict[name] = [genre]
@@ -112,12 +117,12 @@ def initialize():
 	title_dict = file_utils.load_dict()
 
 	#getFile("Pop", title_dict) #1887
-	getFile("Hip%20Hop", title_dict) #596
+	#getFile("Hip%20Hop", title_dict) #596
 	#getFile("Rock", title_dict) #2668
 	#getFile("Electronic", title_dict) #881
-	#getFile("Blues", title_dict) #217
+	#getFile("Blues", title_dict, 109) #217
 	#getFile("Jazz", title_dict) #668
-	#getFile("Funk%20--%20Soul", title_dict) #580
+	getFile("Funk%20--%20Soul", title_dict) #580
 
 	print("[INFO] Finished initialization")
 
@@ -189,8 +194,8 @@ def songs_length():
 	for key,value in sorted(lengths_dict.items()):
 		print(key ," : " , value)
 	
-#initialize()
-#finalize_DB()
-file_utils.create_title_dict()
+initialize()
+finalize_DB()
+#file_utils.create_title_dict()
 print(file_utils.get_status())
 		
