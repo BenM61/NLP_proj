@@ -1,9 +1,11 @@
 import requests
+from transformers import get_polynomial_decay_schedule_with_warmup
 import config_db
 import os
 import pickle
 
 def get_label_counts(root):
+	#how much songs from each label
 	label_dict = {}
 	cnt = 0
 	for folder_name in os.listdir(root):
@@ -20,7 +22,23 @@ def get_label_counts(root):
 	
 	return cnt, label_dict
 
+def create_title_dict(dict_path=config_db.TITLES_GENRES_PATH):
+	titles_dict = {}
+	for genre in os.listdir(config_db.DB_PATH):
+		genre_folder = os.path.join(config_db.DB_PATH, genre)
+		if os.path.isdir(genre_folder):
+			for song in os.listdir(genre_folder):
+				song_txt = os.path.join(genre_folder, song)
+				if os.path.isfile(song_txt):
+					if (song in titles_dict):
+						titles_dict[song].append(genre)
+					else:
+						titles_dict[song] = [genre]
+
+	save_dict(titles_dict,dict_path)
+
 def get_tag_distribution(dict_path):
+	total_titles = len(load_dict(dict_path).keys())
 	total_titles = len(load_dict(dict_path).keys())
 	genre_amt_dict = {}
 	for v in load_dict(dict_path).values():
@@ -29,7 +47,6 @@ def get_tag_distribution(dict_path):
 			genre_amt_dict[n] = 1
 		else:
 			genre_amt_dict[n] += 1
-
 	return total_titles, genre_amt_dict
 
 def get_status_message(cnt, total_titles, label_dict, genre_amt_dict=None):
