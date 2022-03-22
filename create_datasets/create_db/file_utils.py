@@ -30,6 +30,7 @@ def create_title_dict(dict_path=config_db.TITLES_GENRES_PATH):
 			for song in os.listdir(genre_folder):
 				song_txt = os.path.join(genre_folder, song)
 				if os.path.isfile(song_txt):
+					song = song[:-4]
 					if (song in titles_dict):
 						titles_dict[song].append(genre)
 					else:
