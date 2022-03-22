@@ -89,6 +89,12 @@ def load_dict(path=config_db.TEMP_TITLES_GENRES_PATH):
 
 		title_dict = pickle.load(title_file)
 		title_file.close()
+	else:
+		if os.path.exists(config_db.TITLES_GENRES_PATH):
+			title_file = open(config_db.TITLES_GENRES_PATH, "rb")
+
+			title_dict = pickle.load(title_file)
+			title_file.close()
 
 	return title_dict
 

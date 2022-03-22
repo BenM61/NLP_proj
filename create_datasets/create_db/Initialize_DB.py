@@ -12,7 +12,7 @@ def getFile(Lyrics_genre, song_dict, start=0):
 	if not os.path.exists(genre_folder):
 		os.makedirs(genre_folder)
 
-	for i in range (start, 2000):
+	for i in range (start, 3000, 5):
 		main_link = "https://www.lyrics.com/genre/" + Lyrics_genre
 
 		print(f"[INFO] Current page: {i}, current genre: {genre_label}")
@@ -116,13 +116,13 @@ def initialize():
 
 	title_dict = file_utils.load_dict()
 
-	#getFile("Pop", title_dict) #1887
-	#getFile("Hip%20Hop", title_dict) #596
-	#getFile("Rock", title_dict) #2668
+	#getFile("Pop", title_dict) #1887 #jump 4
+	#getFile("Hip%20Hop", title_dict) #596 #all
+	getFile("Rock", title_dict) #2668
 	#getFile("Electronic", title_dict) #881
-	#getFile("Blues", title_dict, 109) #217
+	#getFile("Blues", title_dict, 109) #217 #all
 	#getFile("Jazz", title_dict) #668
-	getFile("Funk%20--%20Soul", title_dict) #580
+	#getFile("Funk%20--%20Soul", title_dict, 165) #580 #all
 
 	print("[INFO] Finished initialization")
 
@@ -196,6 +196,6 @@ def songs_length():
 	
 initialize()
 finalize_DB()
-#file_utils.create_title_dict()
+file_utils.create_title_dict()
 print(file_utils.get_status())
 		
