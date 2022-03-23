@@ -5,14 +5,14 @@ import config_db
 import os
 import preprocessing
 
-def getFile(Lyrics_genre, song_dict, start=0):
+def getFile(Lyrics_genre, song_dict, start=0, jump=1):
 	genre_label = config_db.GENRE_TO_LABEL[Lyrics_genre]
 	genre_folder = config_db.LABEL_TO_PATH[genre_label]
 
 	if not os.path.exists(genre_folder):
 		os.makedirs(genre_folder)
 
-	for i in range (start, 3000, 5):
+	for i in range (start, 3000, jump):
 		main_link = "https://www.lyrics.com/genre/" + Lyrics_genre
 
 		print(f"[INFO] Current page: {i}, current genre: {genre_label}")
@@ -58,7 +58,6 @@ def getLyrics(link, genre, folder, song_dict):
 	# don't deal with titles that are invalid filenames
 	orig_name = name
 	name = file_utils.get_valid_filename(name)
-	name = "My_Man"
 
 	if name is None:
 		#print(f"[DEBUG] skipped {orig_name}")
@@ -78,7 +77,6 @@ def getLyrics(link, genre, folder, song_dict):
 				continue
 			if f:
 				clean_ly += i   
-	clean_ly = "huihiuhihiu"
 	response.close()
 
 	# for valid names, write song lyrics if valid
@@ -106,9 +104,9 @@ def getLyrics(link, genre, folder, song_dict):
 		song_dict[name] = [genre]
 
 	song_path = os.path.join(folder, name + ".txt")
-	#f = open(song_path, "w")
-	#f.write(clean_ly)
-	#f.close()
+	f = open(song_path, "w")
+	f.write(clean_ly)
+	f.close()
 
 def initialize():
 	urllib3.disable_warnings()
@@ -120,10 +118,10 @@ def initialize():
 
 	#getFile("Pop", title_dict) #1887 #jump 4
 	#getFile("Hip%20Hop", title_dict) #596 #all
-	getFile("Rock", title_dict) #2668
+	#getFile("Rock", title_dict) #2668 #jump 5
 	#getFile("Electronic", title_dict) #881
 	#getFile("Blues", title_dict, 109) #217 #all
-	#getFile("Jazz", title_dict) #668
+	getFile("Jazz", title_dict, 304) #668 #all
 	#getFile("Funk%20--%20Soul", title_dict, 165) #580 #all
 
 	print("[INFO] Finished initialization")
@@ -196,17 +194,8 @@ def songs_length():
 	for key,value in sorted(lengths_dict.items()):
 		print(key ," : " , value)
 	
-#initialize()
-#finalize_DB()
-file_utils.create_title_dict()
-#getLyrics("https://www.lyrics.com/lyric/34424390/Tamar+Braxton/My+Man", "ROCK", config_db.LABEL_TO_PATH["ROCK"], title_dict)
-#title_dict = file_utils.load_dict()
-#newd={1:0,2:0,3:0,4:0,5:0}
-#for k in title_dict.keys():
-#	if(len(title_dict[k]) == 5):
-#		print(k)
-#		print(title_dict[k])
-
-#print(newd)
+file_utils.create_title_dict()	
+initialize()
+finalize_DB()
 print(file_utils.get_status())
 		

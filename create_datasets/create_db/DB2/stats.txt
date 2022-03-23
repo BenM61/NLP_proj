@@ -1,13 +1,14 @@
 STATUS:
-AMONUT OF ALL SONGS IN DATABASE (including duplicates): 17967
-AMONUT OF ALL SONGS IN DATABASE (excluding duplicates): 16142
+AMONUT OF ALL SONGS IN DATABASE (including duplicates): 18252
+AMONUT OF ALL SONGS IN DATABASE (excluding duplicates): 16701
 
-HIP_HOP songs: 10.6% (1712)
-BLUES songs: 12.6% (2044)
-POP songs: 22.4% (3626)
-FUNK songs: 31.2% (5041)
-ROCK songs: 34.3% (5544)
+HIP_HOP songs: 8.34% (1393)
+BLUES songs: 10.1% (1700)
+POP songs: 19.5% (3272)
+FUNK songs: 28.5% (4760)
+JAZZ songs: 9.92% (1657)
+ROCK songs: 32.7% (5470)
 
 
 Tag distribution: 
-1: 90.2% (14576)   2: 8.18% (1321)   3: 1.43% (231)   4: 0.08% (14)   
+1: 91.3% (15262)   2: 7.99% (1336)   3: 0.57% (96)   4: 0.02% (5)   5: 0.01% (2)   
