@@ -314,7 +314,9 @@ def get_datasets_status(datasets_title_dict):
 	s += "NOTE: the precentages go above 100 because a song can have more than one genre\n"
 
 	s += f"\n\nTag distribution: \n"
-	for i in range(len(distribution.keys())):
+	for i in range(max(distribution.keys())):
+			if i+1 not in distribution:
+				continue
 			amt = distribution[i+1]
 			percent = str(distribution[i+1]*100 / cnt)[:4]
 			s += f"{i+1}: {percent}% ({amt})   "
