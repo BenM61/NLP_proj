@@ -8,14 +8,25 @@ from sklearn.metrics import accuracy_score, f1_score
 from torch.optim import AdamW
 import copy
 from torch import cuda
+from simpletransformers.t5 import T5Model as t5m
 
 from torch.utils.data import DataLoader
 import numpy as np
 
 from create_datasets.Initialize_Datasets import create_datasets
 
-def get_gpus():
-		print(f"There are {cuda.device_count()} gpus")
+def get_gpu_allocated_size():
+		"""Inspect cached/reserved and allocated memory on specified gpus and return the id of the less used device"""
+		gpus = range(cuda.device_count())
+		# check gpus arg VS available gpus
+		sys_gpus = list(range(cuda.device_count()))
+
+		cur_allocated_mem = {}
+
+		for i in gpus:
+				cur_allocated_mem[i] = cuda.memory_allocated(i)
+
+		print('Current allocated memory:', {f'cuda:{k}': v for k, v in cur_allocated_mem.items()})
 
 class Config:
 	def __init__(self):
@@ -37,10 +48,10 @@ class Config:
 		self.N_VALIDATE_DUR_TRAIN = 3
 		self.EPOCHS = 3
 
-class T5Model(nn.Module): # *********************************************************************
+class T5Model(nn.Module) : # *********************************************************************
 	def __init__(self):
 		super(T5Model, self).__init__()
-
+		self.realmdel = t5m("t5","t5-small")
 		self.t5_model = T5ForConditionalGeneration.from_pretrained("t5-small")
 
 	def forward(
@@ -81,7 +92,7 @@ def get_ohe(x):
 	ohe = np.array(ohe)
 	return ohe
 
-def val(model, val_dataloader):
+def val(model, val_dataloader, criterion):
 	
 	config=Config()
 
@@ -139,9 +150,8 @@ def val(model, val_dataloader):
 	print('Val micro f1 score:', val_micro_f1_score)
 	return val_micro_f1_score
 
-def train(model, train_dataloader, val_dataloader, optimizer, scheduler, epoch):
+def train(model, train_dataloader, val_dataloader, criterion, optimizer, scheduler, epoch):
 	config=Config()
-
 	train_loss = 0
 	for step, batch in enumerate(tqdm(train_dataloader, 
 										desc='Epoch ' + str(epoch))):
@@ -154,16 +164,19 @@ def train(model, train_dataloader, val_dataloader, optimizer, scheduler, epoch):
 		la_ids = batch["labels"]['input_ids'].squeeze(1).long().to(config.DEVICE)
 		la_mask = batch["labels"]["attention_mask"].squeeze(1).long().to(config.DEVICE)
 	
+		get_gpu_allocated_size()
+
 		# replace pad tokens with -100
 		la_ids[la_ids[:, :] == config.TOKENIZER.pad_token_id] = -100
 
-		# forward pass
+		#forward pass
 		outputs = model(input_ids=ly_ids, 
 						attention_mask=ly_mask,
 						lm_labels=la_ids,
 						decoder_attention_mask=la_mask)
 		loss = outputs[0].mean()
 		train_loss += loss.item()
+
 		# clear accumulated gradients
 		optimizer.zero_grad()
 
@@ -172,6 +185,7 @@ def train(model, train_dataloader, val_dataloader, optimizer, scheduler, epoch):
 
 		# update weights
 		optimizer.step()
+		train_loss += loss.item()
 		
 		# update scheduler
 		scheduler.step()
@@ -183,8 +197,6 @@ def run():
 	config = Config()
 	model = T5Model()
 	model = torch.nn.DataParallel(model)
-	
-	get_gpus()
 
 	model.to(config.DEVICE)
 
@@ -196,6 +208,8 @@ def run():
 	# setting a seed ensures reproducible results.
 	# seed may affect the performance too.
 	torch.manual_seed(config.SEED)
+
+	criterion = nn.BCEWithLogitsLoss()
 
 	# define the parameters to be optmized -
 	# - and add regularization
@@ -227,8 +241,8 @@ def run():
 
 	max_val_micro_f1_score = float('-inf')
 	for epoch in range(config.EPOCHS):
-		train(model, train_dataloader, val_dataloader, optimizer, scheduler, epoch)
-		val_micro_f1_score = val(model, val_dataloader)
+		train(model, train_dataloader, val_dataloader, criterion, optimizer, scheduler, epoch)
+		val_micro_f1_score = val(model, val_dataloader, criterion)
 
 		if config.SAVE_BEST_ONLY:
 			if val_micro_f1_score > max_val_micro_f1_score:
