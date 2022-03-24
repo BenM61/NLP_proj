@@ -119,9 +119,9 @@ def initialize():
 	#getFile("Pop", title_dict) #1887 #jump 4
 	#getFile("Hip%20Hop", title_dict) #596 #all
 	#getFile("Rock", title_dict) #2668 #jump 5
-	#getFile("Electronic", title_dict) #881
+	getFile("Electronic", title_dict,594) #881 #all
 	#getFile("Blues", title_dict, 109) #217 #all
-	getFile("Jazz", title_dict, 304) #668 #all
+	#getFile("Jazz", title_dict, 304) #668 #all
 	#getFile("Funk%20--%20Soul", title_dict, 165) #580 #all
 
 	print("[INFO] Finished initialization")
@@ -195,7 +195,7 @@ def songs_length():
 		print(key ," : " , value)
 	
 file_utils.create_title_dict()	
-initialize()
-finalize_DB()
+#initialize()
+#finalize_DB()
 print(file_utils.get_status())
 		

@@ -1,0 +1,90 @@
+view - point 
+(down) 
+left right top point 
+(down) 
+left right flat point 
+(down) 
+left right flat point 
+
+view 
+view 
+view 
+view 
+(point) 
+of view point 
+
+(back) 
+view 
+view 
+(point) 
+view 
+view 
+(point) 
+of view point 
+
+break (down) 
+left right half point (down) 
+left right half point (down) 
+left right half point (down) 
+left right half point (down) 
+view 
+left right half point (down) 
+view 
+left right half point (down) 
+view 
+left right half point (down) 
+view 
+left right half point (down) 
+view 
+left right half point (down) 
+left right half point (down) 
+view 
+left right half point (down) 
+left right half point (down) 
+view 
+
+break (down) 
+point of 
+view 
+point of 
+view 
+point (down) (flat) 
+view 
+point (down) (flat) 
+point (down) (flat) 
+view 
+point (down) (flat) 
+point (down) (flat) 
+point (down) 
+
+left right top point (down) 
+left right top point (of) 
+view - point 
+left right top point (down) 
+left right top point (down) (flat) 
+point (down) (flat) 
+
+break (down) 
+left right point of view 
+point (down) 
+left right top point of view 
+point (down) 
+left right top point of view 
+point (down) 
+left right top point of view 
+point (down) 
+left right top point of view 
+point (down) 
+left right top point of view 
+point (down) 
+left right top point of view 
+point (down) 
+left right top point of view 
+point (down) 
+left right top point of view 
+point (down) 
+left right top point of view 
+point (down) 
+left right top point of view 
+point (down) 
+left right top point of view

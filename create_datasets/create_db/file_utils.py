@@ -61,8 +61,11 @@ def get_status_message(cnt, total_titles, label_dict, genre_amt_dict=None):
 		s += f"{label} songs: {percent}% ({amt})\n"
 
 	if not genre_amt_dict is None:
+		print(genre_amt_dict)
 		s += f"\n\nTag distribution: \n"
-		for i in range(len(genre_amt_dict.keys())):
+		for i in range(max(genre_amt_dict.keys())):
+				if i+1 not in genre_amt_dict:
+					continue
 				amt = genre_amt_dict[i+1]
 				percent = str(genre_amt_dict[i+1]*100 / total_titles)[:4]
 				s += f"{i+1}: {percent}% ({amt})   "
