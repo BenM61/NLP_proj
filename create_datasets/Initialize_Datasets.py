@@ -2,7 +2,7 @@ from .create_db import config_db
 from .create_db import file_utils as utils
 from create_datasets import config_dataset as config
 from create_datasets.LyricsDataset import LyricsDataset
-import create_datasets.preprocessing as preprocessing
+#import create_datasets.preprocessing as preprocessing
 
 import os
 import random
@@ -26,7 +26,7 @@ def copy_then_preprocess_song(from_path, target_root,
   to_path = os.path.join(target_root, filename)
 
   shutil.copy(from_path, to_path)
-  preprocessing.preprocess(to_path)
+  #preprocessing.preprocess(to_path)
 
   # TODO: add checks to varify the preproccesd file is valid
   # (open every time)
@@ -35,9 +35,9 @@ def copy_then_preprocess_song(from_path, target_root,
     if not utils.is_song_file_valid(f):
       valid = False
 
-  with open(to_path) as f:
-    if not preprocessing.no_chorus_no_repeat(f):
-      valid = False
+  #with open(to_path) as f:
+   # if not preprocessing.no_chorus_no_repeat(f):
+    #  valid = False
   
   if valid:
     datasets_title_dict[title] = DB_title_dict[title]
