@@ -8,7 +8,6 @@ from sklearn.metrics import accuracy_score, f1_score
 from torch.optim import AdamW
 import copy
 from torch import cuda
-from simpletransformers.t5 import T5Model as t5m
 
 from torch.utils.data import DataLoader
 import numpy as np
@@ -51,7 +50,6 @@ class Config:
 class T5Model(nn.Module) : # *********************************************************************
 	def __init__(self):
 		super(T5Model, self).__init__()
-		self.realmdel = t5m("t5","t5-small")
 		self.t5_model = T5ForConditionalGeneration.from_pretrained("t5-small")
 
 	def forward(
@@ -92,7 +90,7 @@ def get_ohe(x):
 	ohe = np.array(ohe)
 	return ohe
 
-def val(model, val_dataloader, criterion):
+def val(model, val_dataloader):
 	
 	config=Config()
 
@@ -150,7 +148,7 @@ def val(model, val_dataloader, criterion):
 	print('Val micro f1 score:', val_micro_f1_score)
 	return val_micro_f1_score
 
-def train(model, train_dataloader, val_dataloader, criterion, optimizer, scheduler, epoch):
+def train(model, train_dataloader, val_dataloader, optimizer, scheduler, epoch):
 	config=Config()
 	train_loss = 0
 	for step, batch in enumerate(tqdm(train_dataloader, 
@@ -185,7 +183,6 @@ def train(model, train_dataloader, val_dataloader, criterion, optimizer, schedul
 
 		# update weights
 		optimizer.step()
-		train_loss += loss.item()
 		
 		# update scheduler
 		scheduler.step()
@@ -241,8 +238,8 @@ def run():
 
 	max_val_micro_f1_score = float('-inf')
 	for epoch in range(config.EPOCHS):
-		train(model, train_dataloader, val_dataloader, criterion, optimizer, scheduler, epoch)
-		val_micro_f1_score = val(model, val_dataloader, criterion)
+		train(model, train_dataloader, val_dataloader, optimizer, scheduler, epoch)
+		val_micro_f1_score = val(model, val_dataloader)
 
 		if config.SAVE_BEST_ONLY:
 			if val_micro_f1_score > max_val_micro_f1_score:
