@@ -4,6 +4,7 @@ from torch.nn import Module
 import torch.optim as optim
 import numpy as np
 from nltk.tokenize import word_tokenize
+import json
 
 
 from create_datasets.Initialize_Datasets import create_datasets
@@ -57,6 +58,14 @@ def train():
     labels = batch['raw_labels']
     titles = batch['raw_titles']
 
+    #b = {"text":lyrics , "labels":labels}
+    #tokens = tokenize_sentence(b)
+    #embeddings = nn.Embedding.from_pretrained(torch.FloatTensor(np.load("glove.npy")))
+    #for s in tokens["input_ids"]:
+      #print(s)
+      #print(embeddings(s))
+      #break
+
     outputs = myModel(lyrics, titles)
     
     # clear accumulated gradients
@@ -72,5 +81,12 @@ def train():
   print('Training loss:', avg_train_loss)
 
 def tokenize_sentence(sent):
-  word_tokenize
+  tokenized_lyrics = [word_tokenize(x.lower()) for x in sent['text']] #sentences to words
+  tokenized_idx = [[vocab[word] if word in vocab else vocab["unk"] for word in song] for song in tokenized_lyrics] #words to numbers
+  max_size = max([len(x) for x in tokenized_idx]) 
+  tokenized_idx = [torch.IntTensor(s) for s in tokenized_idx]
+  return {"labels":sent['labels'],"input_ids":tokenized_idx}
+
+with open("vocab.json") as f:
+  vocab = json.load(f)
 train()
