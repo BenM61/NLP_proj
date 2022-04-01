@@ -1,9 +1,0 @@
-Music response [Repeat: x 5]
-
-Music that triggers some kind of response 
-Music that triggers some kind of response [Repeat: x 2]
-
-Music response [Repeat: x 6]
- 
-Music that triggers some kind of response
-Music response [Repeat: x 4]
