@@ -1,6 +1,4 @@
-import requests
-from transformers import get_polynomial_decay_schedule_with_warmup
-import config_db
+from . import config_db
 import os
 import pickle
 
