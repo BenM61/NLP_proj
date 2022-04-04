@@ -45,7 +45,7 @@ class Config:
 		self.N_VALIDATE_DUR_TRAIN = 3
 		self.EPOCHS = 3
 
-class T5Model(T5ForConditionalGeneration) : # *********************************************************************
+class T5Model(nn.Module) : # *********************************************************************
 	def __init__(self):
 		super(T5Model, self).__init__()
 		self.t5_model = T5ForConditionalGeneration.from_pretrained("t5-small")
