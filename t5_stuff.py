@@ -31,12 +31,10 @@ class Config:
 	def __init__(self):
 		super(Config, self).__init__()
 
-		self.SEED = 42
-
 		# data
 		self.TOKENIZER = T5Tokenizer.from_pretrained("t5-small")
 		self.SRC_MAX_LENGTH = 400
-		self.TGT_MAX_LENGTH = 30
+		self.TGT_MAX_LENGTH = 10
 		self.BATCH_SIZE = 8
 
 		# model
@@ -47,7 +45,7 @@ class Config:
 		self.N_VALIDATE_DUR_TRAIN = 3
 		self.EPOCHS = 3
 
-class T5Model(nn.Module) : # *********************************************************************
+class T5Model(T5ForConditionalGeneration) : # *********************************************************************
 	def __init__(self):
 		super(T5Model, self).__init__()
 		self.t5_model = T5ForConditionalGeneration.from_pretrained("t5-small")
@@ -254,4 +252,6 @@ def run():
 
 	return best_model, best_val_micro_f1_score
 
-best_model, best_val_micro_f1_score = run()
+#best_model, best_val_micro_f1_score = run()
+
+create_datasets()
