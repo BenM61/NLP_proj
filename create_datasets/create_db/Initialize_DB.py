@@ -194,8 +194,7 @@ def songs_length():
 	for key,value in sorted(lengths_dict.items()):
 		print(key ," : " , value)
 	
-file_utils.create_title_dict()	
+#file_utils.create_title_dict()	
 #initialize()
 #finalize_DB()
-print(file_utils.get_status())
-		
+#file_utils.save_stats()
