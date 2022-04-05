@@ -13,6 +13,8 @@ from torch.utils.data import DataLoader
 import numpy as np
 
 from create_datasets.Initialize_Datasets import create_datasets
+from out_t5 import myT5Model
+
 
 def get_gpu_allocated_size():
 		"""Inspect cached/reserved and allocated memory on specified gpus and return the id of the less used device"""
@@ -30,6 +32,8 @@ def get_gpu_allocated_size():
 class Config:
 	def __init__(self):
 		super(Config, self).__init__()
+
+		self.SEED = 42
 
 		# data
 		self.TOKENIZER = T5Tokenizer.from_pretrained("t5-small")
@@ -168,7 +172,7 @@ def train(model, train_dataloader, val_dataloader, optimizer, scheduler, epoch):
 		#forward pass
 		outputs = model(input_ids=ly_ids, 
 						attention_mask=ly_mask,
-						lm_labels=la_ids,
+						labels=la_ids,
 						decoder_attention_mask=la_mask)
 		loss = outputs[0].mean()
 		train_loss += loss.item()
@@ -190,12 +194,12 @@ def train(model, train_dataloader, val_dataloader, optimizer, scheduler, epoch):
 
 def run():
 	config = Config()
-	model = T5Model()
+	model = T5ForConditionalGeneration.from_pretrained("t5-small")
 	model = torch.nn.DataParallel(model)
 
 	model.to(config.DEVICE)
 
-	train_ds, test_ds = create_datasets(False)
+	train_ds, test_ds = create_datasets()
 
 	train_dataloader = DataLoader(train_ds, config.BATCH_SIZE, True)
 	val_dataloader = DataLoader(test_ds, config.BATCH_SIZE, False)
@@ -203,8 +207,6 @@ def run():
 	# setting a seed ensures reproducible results.
 	# seed may affect the performance too.
 	torch.manual_seed(config.SEED)
-
-	criterion = nn.BCEWithLogitsLoss()
 
 	# define the parameters to be optmized -
 	# - and add regularization
@@ -252,6 +254,79 @@ def run():
 
 	return best_model, best_val_micro_f1_score
 
-#best_model, best_val_micro_f1_score = run()
 
-create_datasets()
+def run_our_model_fast():
+	config = Config()
+	regular_t5_config = T5ForConditionalGeneration.from_pretrained("t5-small").config
+	model = myT5Model(regular_t5_config)
+	model = torch.nn.DataParallel(model)
+
+	model.to(config.DEVICE)
+
+	train_ds, test_ds = create_datasets()
+
+	train_dataloader = DataLoader(train_ds, config.BATCH_SIZE, True)
+
+	# setting a seed ensures reproducible results.
+	# seed may affect the performance too.
+	torch.manual_seed(config.SEED)
+
+
+	# define the parameters to be optmized -
+	# - and add regularization
+	if config.FULL_FINETUNING:
+			param_optimizer = list(model.named_parameters())
+			no_decay = ["bias", "LayerNorm.bias", "LayerNorm.weight"]
+			optimizer_parameters = [
+					{
+							"params": [
+									p for n, p in param_optimizer if not any(nd in n for nd in no_decay)
+							],
+							"weight_decay": 0.001,
+					},
+					{
+							"params": [
+									p for n, p in param_optimizer if any(nd in n for nd in no_decay)
+							],
+							"weight_decay": 0.0,
+					},
+			]
+			optimizer = AdamW(optimizer_parameters, lr=config.LR)
+
+
+	num_training_steps = len(train_dataloader) * config.EPOCHS
+	scheduler = get_linear_schedule_with_warmup(
+		optimizer,
+		num_warmup_steps=0,
+		num_training_steps=num_training_steps
+	)
+
+	max_val_micro_f1_score = float('-inf')
+	for epoch in range(config.EPOCHS):
+
+		config=Config()
+		train_loss = 0
+		for step, batch in enumerate(tqdm(train_dataloader, 
+											desc='Epoch ' + str(epoch))):
+			# set model.train() every time during training
+			model.train()
+
+			# unpack the batch contents and push them to the device (cuda or cpu).
+			ly_ids = batch["lyrics"]["input_ids"].squeeze(1).long().to(config.DEVICE)
+			ly_mask = batch["lyrics"]["attention_mask"].squeeze(1).long().to(config.DEVICE)
+			la_ids = batch["labels"]['input_ids'].squeeze(1).long().to(config.DEVICE)
+			la_mask = batch["labels"]["attention_mask"].squeeze(1).long().to(config.DEVICE)
+		
+			# replace pad tokens with -100
+			la_ids[la_ids[:, :] == config.TOKENIZER.pad_token_id] = -100
+
+			#forward pass
+			outputs = model(input_ids=ly_ids, 
+							attention_mask=ly_mask,
+							labels=la_ids,
+							decoder_attention_mask=la_mask)
+			loss = outputs[0].mean()
+			train_loss += loss.item()
+	return best_model, best_val_micro_f1_score
+
+best_model, best_val_micro_f1_score = run_fast()
