@@ -1,34 +1,24 @@
 from create_datasets.Initialize_Datasets import create_datasets
-from torch.utils.data import DataLoader
-#from datasets import load_dataset
-
 import pyarrow as pa
 import pyarrow.dataset as ds
 import pandas as pd
 from datasets import Dataset
-
 from nltk.tokenize import word_tokenize
 import json
-
 from datasets import load_metric
 import numpy as np
 import torch
 import torch.nn as nn
-
 from dataclasses import dataclass
-
 from transformers import Trainer
 from transformers import TrainingArguments
 
-################## create ds ######################################3
-tr_ds, te_ds = create_datasets(ignore_titles=False)
-tr_dl = DataLoader(tr_ds, 69, False)
+import gdown
+import nltk
+#gdown.download('https://drive.google.com/uc?export=download&id=1YvXC05yykEwSF8TPgAkJo-OjAJz9GGdk', 'glove.npy', quiet=False) #https://drive.google.com/uc?export=download&id=1PFOG06NEsTL6VieKQjMk1oNzyzcUtiWn
+#gdown.download('https://drive.google.com/uc?export=download&id=1-3SxpirQjmX-RCRyRjKdP2L7G_tNgp00', 'vocab.json', quiet=False)
+#nltk.download('punkt')
 
-#raw_datasets = load_dataset("imdb")
-
-################################ tokenize #######################################33
-with open("vocab.json") as f:
-  vocab = json.load(f)
 
 def tokenize_function(example):
   sentences = [x.lower() for x in example['text']]
@@ -42,49 +32,21 @@ def tokenize_function(example):
     example['label'][i] = d[example['label'][i][0]]
   return {"labels":example['label'],'input_ids':final_tokenized_idx}
 
-######################## train ###########################3
-b = {"text":[tr_ds[i]["raw_lyrics"] for i in range(len(tr_ds))] , 
-      "label":[tr_ds[i]["raw_labels"] for i in range(len(tr_ds))]}
-tokens = tokenize_function(b)
+def make_ds(ds):
+  b = {"text":[ds[i]["raw_lyrics"] for i in range(len(ds))] , 
+      "label":[ds[i]["raw_labels"] for i in range(len(ds))]}
+  tokens = tokenize_function(b)
 
-df = pd.DataFrame({'text': [tr_ds[i]["raw_lyrics"] for i in range(len(tr_ds))], 
-                              "label":b["label"],
-                              "labels":tokens["labels"],
-                              "input_ids":tokens["input_ids"]
-                            }
-                  )
-dataset = ds.dataset(pa.Table.from_pandas(df).to_batches())
-### convert to Huggingface dataset
-hg_dataset1 = Dataset(pa.Table.from_pandas(df))
-
-############################# eval #####################################
-b = {"text":[te_ds[i]["raw_lyrics"] for i in range(len(te_ds))] , 
-      "label":[te_ds[i]["raw_labels"] for i in range(len(te_ds))]}
-tokens = tokenize_function(b)
-
-df = pd.DataFrame({'text': [te_ds[i]["raw_lyrics"] for i in range(len(te_ds))], 
-                              "label":tokens["labels"],
-                              "labels":tokens["labels"],
-                              "input_ids":tokens["input_ids"]
-                            }
-                  )
-dataset = ds.dataset(pa.Table.from_pandas(df).to_batches())
-### convert to Huggingface dataset
-hg_dataset2 = Dataset(pa.Table.from_pandas(df))
-
-rd = {"train":{"text":[tr_ds[i]["raw_lyrics"] for i in range(len(tr_ds))],
-                "label":[tr_ds[i]["raw_labels"] for i in range(len(tr_ds))],
-                "labels":tokens["labels"],
-                "input_ids":tokens["input_ids"]
-                }
-      }
-
-################################################################################################
-
-#small_train_dataset = raw_datasets['train'].shuffle(seed=42).map(tokenize_function,batched=True)
-#small_eval_dataset = raw_datasets['test'].shuffle(seed=42).map(tokenize_function,batched=True)
-small_train_dataset = hg_dataset2
-small_eval_dataset = hg_dataset1
+  df = pd.DataFrame({'text': b["text"], 
+                                "label":tokens["labels"],
+                                "labels":tokens["labels"],
+                                "input_ids":tokens["input_ids"]
+                              }
+                    )
+  dataset = ds.dataset(pa.Table.from_pandas(df).to_batches())
+  ### convert to Huggingface dataset
+  hg_dataset = Dataset(pa.Table.from_pandas(df))
+  return hg_dataset
 
 def pad_sequence_to_length(
     sequence,
@@ -109,8 +71,6 @@ def pad_sequence_to_length(
         padded_sequence = values_to_pad + padded_sequence
     return padded_sequence
 
-metric = load_metric("accuracy")
-
 def compute_metrics(eval_pred):
     logits = eval_pred.predictions
     labels = eval_pred.label_ids
@@ -122,8 +82,7 @@ class DataCollatorWithPadding:
   
   def __call__(self, features):
     features_dict={}
-    if "labels" in features[0]:
-        
+    if "labels" in features[0]:    
       features_dict["labels"] = torch.tensor([x.pop("labels") for x in features]).long()
 
     input_ids = [x.pop("input_ids") for x in features]
@@ -178,11 +137,17 @@ class DAN(nn.Module):
       loss = self.loss(res,labels)
       return {"loss":loss,"logits":res}
 
-#Hint: You may want to look at https://huggingface.co/transformers/main_classes/callback.html
 
+
+tr_ds, te_ds = create_datasets(ignore_titles=True)
+with open("vocab.json") as f:
+  vocab = json.load(f)
+small_train_dataset = make_ds(tr_ds)
+small_eval_dataset = make_ds(te_ds)
+metric = load_metric("accuracy")
 co = DataCollatorWithPadding()
 training_args = TrainingArguments("DAN",
-                                  num_train_epochs= 20, #must be at least 10.
+                                  num_train_epochs= 10, #must be at least 10.
                                   per_device_train_batch_size=32,
                                   per_device_eval_batch_size=4,
                                   learning_rate= 0.01,
@@ -199,5 +164,17 @@ trainer = Trainer(
     eval_dataset=small_eval_dataset,
     compute_metrics=compute_metrics,
 )
-
 trainer.train()
+
+res = trainer.predict(small_eval_dataset)
+preds = np.argmax(res.predictions, axis=-1)
+wrongs = [] #indices we are wrong
+rights = [] #indices we are right
+for i in range(len(preds)):
+  if(preds[i] == small_eval_dataset["labels"][i]):
+    rights.append(i)
+  else:
+    wrongs.append(i)
+
+print("rights: ",len(rights))
+print("wrongs: ",len(wrongs))
