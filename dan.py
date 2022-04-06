@@ -13,19 +13,14 @@ from dataclasses import dataclass
 from transformers import Trainer
 from transformers import TrainingArguments
 
-import gdown
-import nltk
-#gdown.download('https://drive.google.com/uc?export=download&id=1YvXC05yykEwSF8TPgAkJo-OjAJz9GGdk', 'glove.npy', quiet=False) #https://drive.google.com/uc?export=download&id=1PFOG06NEsTL6VieKQjMk1oNzyzcUtiWn
-#gdown.download('https://drive.google.com/uc?export=download&id=1-3SxpirQjmX-RCRyRjKdP2L7G_tNgp00', 'vocab.json', quiet=False)
-#nltk.download('punkt')
-
 
 def tokenize_function(example):
-  sentences = [x.lower() for x in example['text']]
+  sentences = [x.lower().replace("\n", "#") for x in example['text']]
   tokenized_sentences = [word_tokenize(x) for x in sentences]
   tokenized_idx = [[vocab[word] if word in vocab else vocab["unk"] for word in x] for x in tokenized_sentences]
   max_size = max([len(x) for x in tokenized_idx])
   final_tokenized_idx = tokenized_idx
+
   d = {"POP":0, "ROCK":1, "ELECTRONIC":2, "JAZZ":3, "FUNK":4, "HIP_HOP":5, "BLUES":6}
  
   for i in range(len(example['label'])): 
