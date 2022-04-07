@@ -67,6 +67,7 @@ def pad_sequence_to_length(
     return padded_sequence
 
 def compute_metrics(eval_pred):
+    metric = load_metric("accuracy")
     logits = eval_pred.predictions
     labels = eval_pred.label_ids
     predictions = np.argmax(logits, axis=-1)
@@ -139,7 +140,6 @@ with open("vocab.json") as f:
   vocab = json.load(f)
 small_train_dataset = make_ds(tr_ds)
 small_eval_dataset = make_ds(te_ds)
-metric = load_metric("accuracy")
 co = DataCollatorWithPadding()
 training_args = TrainingArguments("DAN",
                                   num_train_epochs= 10, #must be at least 10.
@@ -161,15 +161,5 @@ trainer = Trainer(
 )
 trainer.train()
 
-res = trainer.predict(small_eval_dataset)
-preds = np.argmax(res.predictions, axis=-1)
-wrongs = [] #indices we are wrong
-rights = [] #indices we are right
-for i in range(len(preds)):
-  if(preds[i] == small_eval_dataset["labels"][i]):
-    rights.append(i)
-  else:
-    wrongs.append(i)
-
-print("rights: ",len(rights))
-print("wrongs: ",len(wrongs))
+preds = trainer.predict(small_eval_dataset)
+print(compute_metrics(preds))
