@@ -28,8 +28,8 @@ def tokenize_function(example):
   return {"labels":example['label'],'input_ids':final_tokenized_idx}
 
 def make_ds(ds):
-  b = {"text":[ds[i]["raw_lyrics"] for i in range(len(ds))] , 
-      "label":[ds[i]["raw_labels"] for i in range(len(ds))]}
+  b = {"text":[ds[i]["lyrics"] for i in range(len(ds))] , 
+      "label":[ds[i]["label"] for i in range(len(ds))]}
   tokens = tokenize_function(b)
 
   df = pd.DataFrame({'text': b["text"], 
@@ -38,7 +38,6 @@ def make_ds(ds):
                                 "input_ids":tokens["input_ids"]
                               }
                     )
-  dataset = ds.dataset(pa.Table.from_pandas(df).to_batches())
   ### convert to Huggingface dataset
   hg_dataset = Dataset(pa.Table.from_pandas(df))
   return hg_dataset

@@ -46,7 +46,7 @@ def copy_then_preprocess_song(from_path, target_root,
 
   return valid, to_path
 
-def create_datasets(ignore_titles=True, tokenize=True):
+def create_datasets(ignore_titles=True):
   print(f"[INFO] Starts creating Datasets...")
   if os.path.exists(config.TITLES_GENRES_PATH):
     print(f"[INFO] Loading saved files for datasets...")
@@ -87,7 +87,7 @@ def create_datasets(ignore_titles=True, tokenize=True):
   test_paths = paths[split_ind:]
 
   # make the dataset objects
-  train_dataset = LyricsDataset(datasets_title_dict, train_paths, ignore_titles, tokenize)
-  test_dataset = LyricsDataset(datasets_title_dict, test_paths, ignore_titles, tokenize)
+  train_dataset = LyricsDataset(datasets_title_dict, train_paths, ignore_titles)
+  test_dataset = LyricsDataset(datasets_title_dict, test_paths, ignore_titles)
 
   return train_dataset, test_dataset
