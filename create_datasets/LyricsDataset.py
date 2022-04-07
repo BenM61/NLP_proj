@@ -45,4 +45,4 @@ class LyricsDataset(Dataset):
 	def __getitem__(self, index):
 		title = self.titles[index] if self.ignore_titles else ""
 		return {"lyrics" : self.lyrics[index] + title,
-						"label" : self.labels[index]}
+						"label" : self.labels[index][0]}

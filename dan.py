@@ -24,7 +24,7 @@ def tokenize_function(example):
   d = {"POP":0, "ROCK":1, "ELECTRONIC":2, "JAZZ":3, "FUNK":4, "HIP_HOP":5, "BLUES":6}
  
   for i in range(len(example['label'])): 
-    example['label'][i] = d[example['label'][i][0]]
+    example['label'][i] = d[example['label'][i]]
   return {"labels":example['label'],'input_ids':final_tokenized_idx}
 
 def make_ds(ds):
