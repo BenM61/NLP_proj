@@ -113,14 +113,28 @@ class DAN(nn.Module):
           self.loss = nn.CrossEntropyLoss()
 
   def forward(self,input_ids,attention_masks,labels=None,**kwargs):
-      masked = input_ids * attention_masks
-      embs = self.embeddings(masked)
-
-      # word dropout - same vector for each sample
+      # converting the token ids tensors to list of strings, so we can divide to phrases and lines
       input_size = input_ids.size()
+      hashtag = vocab["#"]
+      versed_input_ids = []
+      embs = []
+
+      for i in range(input_size[0]):
+        tokenized_song = input_ids[i].tolist()
+        tokenized_song = [str(x) for x in tokenized_song]
+        verses = " ".join(tokenized_song).split(f"{hashtag} {hashtag}")
+        lines = [v.split(f"{hashtag}") for v in verses]
+        lines_as_lists = [[l.split(" ") for l in v] for v in lines]
+        # remove unwanted spaces and cast back to int
+        lines_as_lists = [[[int(x) for x in l if x != ''] for l in v] for v in lines_as_lists]
+
+        verses_tensors = [torch.tensor([pad_sequence_to_length(l, 12) for l in v]).long() for v in lines_as_lists]
+        versed_input_ids.append(verses_tensors)
+    
+        
+      # word dropout - same vector for each sample
       p = 0.3
       apply_dropout = torch.nn.Dropout(p)
-
       m = torch.ones(input_size[0], input_size[1])
       m = apply_dropout(m).bool().int()
 
@@ -142,9 +156,6 @@ class DAN(nn.Module):
 
 
 tr_ds, te_ds = create_datasets(ignore_titles=True)
-with open("vocab.json") as f:
-  vocab = json.load(f)
-
 with open("vocab.json") as f:
   vocab = json.load(f)
 with open("vocab_inverted.json") as f:
