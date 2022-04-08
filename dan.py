@@ -14,6 +14,13 @@ from transformers import Trainer
 from transformers import TrainingArguments
 
 
+def untokenize_song(token_ids_tensor):  
+  token_ids_list = token_ids_tensor.tolist()
+  word_list = [inv_vocab[str(x)] for x in token_ids_list]
+  untokenized = ' '.join(word_list).replace("#", "\n").replace("PADDING_TOKEN","")
+  print(untokenized)
+  return untokenized
+
 def tokenize_function(example):
   sentences = [x.lower().replace("\n", "#") for x in example['text']]
   tokenized_sentences = [word_tokenize(x) for x in sentences]
@@ -137,6 +144,12 @@ class DAN(nn.Module):
 tr_ds, te_ds = create_datasets(ignore_titles=True)
 with open("vocab.json") as f:
   vocab = json.load(f)
+
+with open("vocab.json") as f:
+  vocab = json.load(f)
+with open("vocab_inverted.json") as f:
+  inv_vocab = json.load(f)
+
 small_train_dataset = make_ds(tr_ds)
 small_eval_dataset = make_ds(te_ds)
 co = DataCollatorWithPadding()
