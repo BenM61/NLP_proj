@@ -7,6 +7,14 @@ building datasets:
 1. at first we wanted to divide by files- its dumb (one song multiple files), so we
 divided by song titles
 
+training:
+t5???
+redoing dan
+how long the songs should be?
+more than one genre?
+how long each line?
+maybe pad all songs to 6 verses?
+
 todo:
 1. no songs with over 3/4 tags                V
 2. preprocess-
