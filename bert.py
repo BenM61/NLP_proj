@@ -61,7 +61,7 @@ def evaluate(dataloader_val):
 
 #getting df
 tr_ds, te_ds = create_datasets(ignore_titles=True)
-a = [[tr_ds[i]["lyrics"],tr_ds[i]["label"]] for i in range(7000)]
+a = [[tr_ds[i]["lyrics"],tr_ds[i]["label"]] for i in range(len(tr_ds))]
 df = pd.DataFrame(a, columns=["lyrics","genre"])
 #print(df['genre'].value_counts())
 
