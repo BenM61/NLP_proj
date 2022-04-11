@@ -119,12 +119,11 @@ class DAN(nn.Module):
       input_size = input_ids.size()
       hashtag = vocab["#"]
       versed_input_ids = []
-      embs = []
 
       # break batch to list of lists of verse tokenizations
       for i in range(input_size[0]):
         tokenized_song = input_ids[i].tolist()
-        tokenized_song = [str(x) for x in tokenized_song]
+        tokenized_song = [str(x) for x in tokenized_song if x != 0]
         verses = " ".join(tokenized_song).split(f"{hashtag} {hashtag}")
         verses_as_lists = [v.replace(f"{hashtag}", "").split(" ") for v in verses]
         # remove unwanted spaces and cast back to int
