@@ -13,7 +13,6 @@ from dataclasses import dataclass
 from transformers import Trainer
 from transformers import TrainingArguments
 
-
 def untokenize_song(token_ids_tensor):  
   token_ids_list = token_ids_tensor.tolist()
   word_list = [inv_vocab[str(x)] for x in token_ids_list]
@@ -102,6 +101,9 @@ class DAN(nn.Module):
           self.num_labels = 7
           self.embeddings = nn.Embedding.from_pretrained(torch.FloatTensor(np.load("glove.npy")))
           self.hidden_size = torch.FloatTensor(np.load("glove.npy")).size()[1]
+
+          self.gru = torch.nn.GRU(self.hidden_size, self.hidden_size)
+          self.h0 = torch.randn((1, 1, self.hidden_size))
           self.classifier = nn.Sequential(
               nn.Linear(self.hidden_size, self.hidden_size),
               nn.ReLU(), 
@@ -119,37 +121,49 @@ class DAN(nn.Module):
       versed_input_ids = []
       embs = []
 
+      # break batch to list of lists of verse tokenizations
       for i in range(input_size[0]):
         tokenized_song = input_ids[i].tolist()
         tokenized_song = [str(x) for x in tokenized_song]
         verses = " ".join(tokenized_song).split(f"{hashtag} {hashtag}")
-        lines = [v.split(f"{hashtag}") for v in verses]
-        lines_as_lists = [[l.split(" ") for l in v] for v in lines]
+        verses_as_lists = [v.replace(f"{hashtag}", "").split(" ") for v in verses]
         # remove unwanted spaces and cast back to int
-        lines_as_lists = [[[int(x) for x in l if x != ''] for l in v] for v in lines_as_lists]
-
-        verses_tensors = [torch.tensor([pad_sequence_to_length(l, 12) for l in v]).long() for v in lines_as_lists]
+        verses_as_lists = [[int(x) for x in v if x != ''] for v in verses_as_lists]
+        verses_tensors = [torch.tensor(v).long() for v in verses_as_lists if len(v) > 0]
         versed_input_ids.append(verses_tensors)
     
+      # get embs
+      embedded_input_ids = []
+      for song in versed_input_ids:
+        curr_embs = []
+        for verse in song:
+          curr_embs.append(self.embeddings(verse))
+        embedded_input_ids.append(curr_embs)
+
+      # average each verse
+      averaged_input_ids = []
+      for song in embedded_input_ids:
+        curr_averages = []
+        for verse in song:
+          curr_averages.append(verse.mean(0))
         
-      # word dropout - same vector for each sample
-      p = 0.3
-      apply_dropout = torch.nn.Dropout(p)
-      m = torch.ones(input_size[0], input_size[1])
-      m = apply_dropout(m).bool().int()
+        curr_averages = torch.stack(tuple(curr_averages), 0)
+        averaged_input_ids.append(curr_averages)
 
-      nonzeros_arr = [torch.count_nonzero(m[i]) for i in range(input_size[0])]
+      # get a song level representation
+      songs_tensor = []
 
-      for i in range(input_size[0]):
-          for j in range(input_size[1]):
-              torch.mul(embs[i][j], m[i][j])
-          
-      avg = torch.sum(embs, 1)
+      for song in averaged_input_ids:
+        song = song.unsqueeze(1)
+        _, output = self.gru(song, self.h0)
+        output = output.squeeze(0).squeeze(0)
+        songs_tensor.append(output)
 
-      for i in range(input_size[0]):
-        avg[i] = torch.mul(avg[i], 1 / nonzeros_arr[i])
+      songs_tensor = torch.stack(tuple(songs_tensor), 0)
 
-      res = self.classifier(avg)
+      res = self.classifier(songs_tensor)
+    
+
       loss = self.loss(res,labels)
       return {"loss":loss,"logits":res}
 
@@ -165,7 +179,7 @@ small_train_dataset = make_ds(tr_ds)
 small_eval_dataset = make_ds(te_ds)
 co = DataCollatorWithPadding()
 training_args = TrainingArguments("DAN",
-                                  num_train_epochs= 10, #must be at least 10.
+                                  num_train_epochs= 20, #must be at least 10.
                                   per_device_train_batch_size=32,
                                   per_device_eval_batch_size=4,
                                   learning_rate= 0.01,
