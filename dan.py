@@ -177,13 +177,14 @@ with open("vocab_inverted.json") as f:
 
 small_train_dataset = make_ds(tr_ds)
 small_eval_dataset = make_ds(te_ds)
+
 co = DataCollatorWithPadding()
 training_args = TrainingArguments("DAN",
-                                  num_train_epochs= 20, #must be at least 10.
+                                  num_train_epochs= 10, #must be at least 10.
                                   per_device_train_batch_size=32,
                                   per_device_eval_batch_size=4,
-                                  learning_rate= 0.01,
-                                  save_total_limit=2,
+                                  learning_rate= 0.001,
+                                  save_total_limit=1,
                                   log_level="error",
                                   evaluation_strategy="epoch")
 model = DAN()  
