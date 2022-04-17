@@ -125,7 +125,7 @@ class DAN(nn.Module):
       masked = input_ids * attention_masks
       embs = self.embeddings(masked)
       
-      nonzeros_arr = torch.count_nonzero(dropout_mask, 1)
+      nonzeros_arr = torch.count_nonzero(attention_masks, 1)
       avg = torch.sum(embs, 1)
       avg = torch.mul(avg, 1 / nonzeros_arr.unsqueeze(1))
 
@@ -147,10 +147,10 @@ small_train_dataset = make_ds(tr_ds)
 small_eval_dataset = make_ds(te_ds)
 co = DataCollatorWithPadding()
 training_args = TrainingArguments("DAN",
-                                  num_train_epochs= 10, #must be at least 10.
+                                  num_train_epochs= 40, #must be at least 10.
                                   per_device_train_batch_size=32,
                                   per_device_eval_batch_size=4,
-                                  learning_rate= 0.01,
+                                  learning_rate= 0.001,
                                   save_total_limit=2,
                                   log_level="error",
                                   evaluation_strategy="epoch")
