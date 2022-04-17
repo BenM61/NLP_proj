@@ -139,15 +139,33 @@ class DAN(nn.Module):
           curr_embs.append(self.embeddings(verse))
         embedded_input_ids.append(curr_embs)
 
-      # average each verse
+      # apply word dropout
+      p = 0.3
+      apply_dropout = torch.nn.Dropout(p)
       averaged_input_ids = []
       for song in embedded_input_ids:
         curr_averages = []
         for verse in song:
-          curr_averages.append(verse.mean(0))
-        
+          input_size = verse.size()
+          m = torch.ones(input_size[0], input_size[1])
+          m = apply_dropout(m).bool().int()
+
+          nonzeros_arr = [torch.count_nonzero(m[i]) for i in range(input_size[0])]
+
+          for i in range(input_size[0]):
+              for j in range(input_size[1]):
+                  torch.mul(verse[i][j], m[i][j])
+
+          avg = torch.sum(verse, 0)
+
+          for i in range(input_size[0]):
+            avg[i] = torch.mul(avg[i], 1 / nonzeros_arr[i])
+
+          curr_averages.append(avg)
+      
         curr_averages = torch.stack(tuple(curr_averages), 0)
         averaged_input_ids.append(curr_averages)
+
 
       # get a song level representation
       songs_tensor = []
