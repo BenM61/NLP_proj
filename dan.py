@@ -80,19 +80,61 @@ def compute_metrics(eval_pred):
 
 @dataclass
 class DataCollatorWithPadding:
-  
   def __call__(self, features):
     features_dict={}
     if "labels" in features[0]:    
       features_dict["labels"] = torch.tensor([x.pop("labels") for x in features]).long()
 
+    # converting the token ids tensors to list of strings, so we can
+    # divide to phrases and lines
     input_ids = [x.pop("input_ids") for x in features]
-    max_len = max(len(x) for x in input_ids)
-    masks = [[1]*len(x) for x in input_ids]
+    hashtag = vocab["#"]
+    versed_input_ids = []
     
-    features_dict["input_ids"] = torch.tensor([pad_sequence_to_length(x,max_len) for x in input_ids]).long()
-    features_dict["attention_masks"] = torch.tensor([pad_sequence_to_length(x,max_len) for x in masks]).long()
+    # break batch to list of lists of verse tokenizations
+    for tokenized_song in input_ids:
+      tokenized_song = [str(x) for x in tokenized_song if x != 0]
+      verses = " ".join(tokenized_song).split(f"{hashtag} {hashtag}")
+      verses_as_lists = [v.split(str(hashtag)) for v in verses]
+      verses_as_lists = [[line.split(" ") for line in v] for v in verses_as_lists]
+      # remove unwanted spaces and cast back to int
+      verses_as_lists = [[[int(x) for x in line if x != ''] for line in v] \
+                                                            for v in verses_as_lists]
+      versed_input_ids.append(verses_as_lists)
 
+    input_ids = versed_input_ids
+    attention_masks = [[[[1]*len(l) for l in v] for v in s] for s in input_ids]
+
+    # line level pad
+    input_ids = [[[torch.tensor(                                           \
+                  pad_sequence_to_length(l, LINE_PAD_LEN, LINE_PAD_FUNC)   \
+                            ).long() for l in v] for v in s] for s in input_ids]
+    attention_masks = [[[torch.tensor(                                     \
+                  pad_sequence_to_length(l, LINE_PAD_LEN, LINE_PAD_FUNC)   \
+                            ).long() for l in v] for v in s] for s in attention_masks]
+
+    # verse level pad      
+    input_ids = [[torch.stack(                                                     \
+                tuple(pad_sequence_to_length(v, VERSE_PAD_LEN, VERSE_PAD_FUNC))    \
+                          , 0) for v in s] for s in input_ids]
+    attention_masks = [[torch.stack(                                               \
+                tuple(pad_sequence_to_length(v, VERSE_PAD_LEN, VERSE_PAD_FUNC))    \
+                          , 0) for v in s] for s in attention_masks]    
+    
+    # song level pad      
+    input_ids = [torch.stack(                                                    \
+                tuple(pad_sequence_to_length(s, SONG_PAD_LEN, SONG_PAD_FUNC))    \
+                          , 0) for s in input_ids]
+    attention_masks = [torch.stack(                                              \
+                tuple(pad_sequence_to_length(s, SONG_PAD_LEN, SONG_PAD_FUNC))    \
+                          , 0) for s in attention_masks]
+    
+    # one tensor for the batch
+    input_ids = torch.stack(input_ids, 0)
+    attention_masks = torch.stack(attention_masks, 0)
+
+    features_dict["input_ids"] = input_ids
+    features_dict["attention_masks"] = attention_masks
     return features_dict
 
 class DAN(nn.Module):
@@ -100,9 +142,11 @@ class DAN(nn.Module):
           super().__init__()
           self.num_labels = 7
           self.embeddings = nn.Embedding.from_pretrained(torch.FloatTensor(np.load("glove.npy")))
-          self.hidden_size = torch.FloatTensor(np.load("glove.npy")).size()[1]
+          emb_size = torch.FloatTensor(np.load("glove.npy")).size()[1]
+          self.hidden_size = emb_size
+          self.input_size = emb_size * LINE_PAD_LEN
 
-          self.gru = torch.nn.GRU(self.hidden_size, self.hidden_size)
+          self.gru = torch.nn.GRU(self.input_size, self.hidden_size)
           self.h0 = torch.randn((1, 1, self.hidden_size))
           self.classifier = nn.Sequential(
               nn.Linear(self.hidden_size, self.hidden_size),
@@ -114,31 +158,10 @@ class DAN(nn.Module):
 
           self.loss = nn.CrossEntropyLoss()
 
-  def forward(self,input_ids,attention_masks,labels=None,**kwargs):
-      # converting the token ids tensors to list of strings, so we can divide to phrases and lines
-      input_size = input_ids.size()
-      hashtag = vocab["#"]
-      versed_input_ids = []
-
-      # break batch to list of lists of verse tokenizations
-      for i in range(input_size[0]):
-        tokenized_song = input_ids[i].tolist()
-        tokenized_song = [str(x) for x in tokenized_song if x != 0]
-        verses = " ".join(tokenized_song).split(f"{hashtag} {hashtag}")
-        verses_as_lists = [v.replace(f"{hashtag}", "").split(" ") for v in verses]
-        # remove unwanted spaces and cast back to int
-        verses_as_lists = [[int(x) for x in v if x != ''] for v in verses_as_lists]
-        verses_tensors = [torch.tensor(v).long() for v in verses_as_lists if len(v) > 0]
-        versed_input_ids.append(verses_tensors)
-    
+  def forward(self, input_ids, attention_masks, labels=None, **kwargs):
       # get embs
-      embedded_input_ids = []
-      for song in versed_input_ids:
-        curr_embs = []
-        for verse in song:
-          curr_embs.append(self.embeddings(verse))
-        embedded_input_ids.append(curr_embs)
-
+      embedded_input_ids = self.embeddings(input_ids)
+    
       # apply word dropout
       p = 0.3
       apply_dropout = torch.nn.Dropout(p)
@@ -165,7 +188,6 @@ class DAN(nn.Module):
       
         curr_averages = torch.stack(tuple(curr_averages), 0)
         averaged_input_ids.append(curr_averages)
-
 
       # get a song level representation
       songs_tensor = []
@@ -194,6 +216,16 @@ with open("vocab_inverted.json") as f:
 
 small_train_dataset = make_ds(tr_ds)
 small_eval_dataset = make_ds(te_ds)
+
+# constants
+LINE_PAD_LEN = 12
+VERSE_PAD_LEN = 6
+SONG_PAD_LEN = 9
+
+LINE_PAD_FUNC = lambda: 0
+VERSE_PAD_FUNC = lambda: torch.zeros(LINE_PAD_LEN).long()
+SONG_PAD_FUNC = lambda: torch.zeros(VERSE_PAD_LEN, LINE_PAD_LEN).long()
+
 
 co = DataCollatorWithPadding()
 training_args = TrainingArguments("DAN",
