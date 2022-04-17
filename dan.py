@@ -113,32 +113,25 @@ class DAN(nn.Module):
           self.loss = nn.CrossEntropyLoss()
 
   def forward(self,input_ids,attention_masks,labels=None,**kwargs):
-      masked = input_ids * attention_masks
-      embs = self.embeddings(masked)
-
       # word dropout - same vector for each sample
       input_size = input_ids.size()
       p = 0.3
       apply_dropout = torch.nn.Dropout(p)
 
-      m = torch.ones(input_size[0], input_size[1])
-      m = apply_dropout(m).bool().int()
+      dropout_mask = torch.ones(input_size[0], input_size[1])
+      dropout_mask = apply_dropout(dropout_mask).bool().int()
 
-      nonzeros_arr = [torch.count_nonzero(m[i]) for i in range(input_size[0])]
-
-      for i in range(input_size[0]):
-          for j in range(input_size[1]):
-              torch.mul(embs[i][j], m[i][j])
-          
+      attention_masks = attention_masks * dropout_mask
+      masked = input_ids * attention_masks
+      embs = self.embeddings(masked)
+      
+      nonzeros_arr = torch.count_nonzero(dropout_mask, 1)
       avg = torch.sum(embs, 1)
-
-      for i in range(input_size[0]):
-        avg[i] = torch.mul(avg[i], 1 / nonzeros_arr[i])
+      avg = torch.mul(avg, 1 / nonzeros_arr.unsqueeze(1))
 
       res = self.classifier(avg)
       loss = self.loss(res,labels)
       return {"loss":loss,"logits":res}
-
 
 
 tr_ds, te_ds = create_datasets(ignore_titles=True)
