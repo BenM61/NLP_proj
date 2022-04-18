@@ -45,3 +45,15 @@ set up job:
 optional:
 squeue --me # view only your jobs on the queue
 sbatch --test-only myjob.slurm # view when it will start and with how many proccessors
+
+dan todo:
+V batch -> 2d-list of verse representations
+V 2d-list of verse representations -> 2d-list of embedded verse representations
+V 2d-list of embedded verse representations -> 2d-list of averaged verses
+V make rnn inside the dan init
+V integrate rnn to the dan
+V implement dropout (specificaly- replace mean with sum and division)
+
+
+V all process in many parts -> all process in one loop
+V check if padding less will perform better
