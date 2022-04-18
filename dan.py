@@ -135,36 +135,3 @@ class DAN(nn.Module):
 
 
 tr_ds, te_ds = create_datasets(ignore_titles=True)
-with open("vocab.json") as f:
-  vocab = json.load(f)
-
-with open("vocab.json") as f:
-  vocab = json.load(f)
-with open("vocab_inverted.json") as f:
-  inv_vocab = json.load(f)
-
-small_train_dataset = make_ds(tr_ds)
-small_eval_dataset = make_ds(te_ds)
-co = DataCollatorWithPadding()
-training_args = TrainingArguments("DAN",
-                                  num_train_epochs= 40, #must be at least 10.
-                                  per_device_train_batch_size=32,
-                                  per_device_eval_batch_size=4,
-                                  learning_rate= 0.001,
-                                  save_total_limit=2,
-                                  log_level="error",
-                                  evaluation_strategy="epoch")
-model = DAN()  
-trainer = Trainer(
-    model=model,
-    data_collator=co,
-    args=training_args,
-    callbacks = [],
-    train_dataset=small_train_dataset,
-    eval_dataset=small_eval_dataset,
-    compute_metrics=compute_metrics,
-)
-trainer.train()
-
-preds = trainer.predict(small_eval_dataset)
-print(compute_metrics(preds))

@@ -1,15 +1,15 @@
 STATUS:
-AMONUT OF ALL SONGS IN DATABASE: 22188
+AMONUT OF ALL SONGS IN DATABASE: 20406
 
-HIP_HOP songs: 6.27% (1393)
-FUNK songs: 21.4% (4760)
-ELECTRONIC songs: 26.4% (5875)
-POP songs: 14.7% (3272)
-ROCK songs: 24.6% (5470)
-BLUES songs: 7.66% (1700)
-JAZZ songs: 7.46% (1657)
+HIP_HOP songs: 4.45% (910)
+BLUES songs: 6.22% (1271)
+POP songs: 12.7% (2593)
+FUNK songs: 18.2% (3732)
+JAZZ songs: 7.51% (1533)
+ROCK songs: 23.9% (4880)
+ELECTRONIC songs: 26.8% (5487)
 NOTE: the precentages go above 100 because a song can have more than one genre
 
 
 Tag distribution: 
-1: 91.9% (20406)   2: 7.39% (1640)   3: 0.59% (131)   4: 0.04% (9)   6: 0.00% (2)   
+1: 100.% (20406)   

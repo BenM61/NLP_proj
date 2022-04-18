@@ -26,7 +26,6 @@ def copy_then_preprocess_song(from_path, target_root,
   to_path = os.path.join(target_root, filename)
 
   shutil.copy(from_path, to_path)
-  #preprocessing.preprocess(to_path)
 
   # TODO: add checks to varify the preproccesd file is valid
   # (open every time)
@@ -34,10 +33,6 @@ def copy_then_preprocess_song(from_path, target_root,
   with open(to_path) as f:
     if not utils.is_song_file_valid(f):
       valid = False
-
-  #with open(to_path) as f:
-   # if not preprocessing.no_chorus_no_repeat(f):
-    #  valid = False
   
   if valid:
     datasets_title_dict[title] = DB_title_dict[title]
@@ -60,22 +55,22 @@ def create_datasets(ignore_titles=True):
     DB_root = config_db.DB_PATH
 
     DB_title_dict = utils.load_dict(config_db.TITLES_GENRES_PATH)
-    datasets_title_dict = utils.load_dict(config.TITLES_GENRES_PATH)
-
+    datasets_title_dict = {}
     titles = list(DB_title_dict.keys())
     
     #print(f"[DEBUG] Copying and preprocessing song files...")
     os.mkdir(config.SONGS_PATH)
     for title in titles:
-      # get a path to this song
-      label = DB_title_dict[title][0]
-      song_path = os.path.join(DB_root, label, title + ".txt")
+      if len(DB_title_dict[title]) == 1:
+        # get a path to this song
+        label = DB_title_dict[title][0]
+        song_path = os.path.join(DB_root, label, title + ".txt")
 
-      valid, path = copy_then_preprocess_song(song_path, config.SONGS_PATH, 
-                        DB_title_dict, datasets_title_dict)
-      if valid:
-        paths.append(path)
-      
+        valid, path = copy_then_preprocess_song(song_path, config.SONGS_PATH, 
+                          DB_title_dict, datasets_title_dict)
+        if valid:
+          paths.append(path)
+          
     utils.save_dict(datasets_title_dict, config.TITLES_GENRES_PATH)
     #print(f"[DEBUG] Updating stats...")
     utils.save_datasets_stats(config.OVERALL_STATS_PATH, datasets_title_dict)
