@@ -11,13 +11,11 @@ class LyricsDataset(Dataset):
 	
 		return lyrics
 
-	def _get_labels(self, title_dict, song_path):
+	def _get_label(self, title_dict, song_path):
 		title = str(song_path).split(os.path.sep)[-1][:-4]
-		unpadded_labels = title_dict[title]
+		label = title_dict[title][0]
 
-		labels = unpadded_labels + [""] * (5 - len(unpadded_labels))
-
-		return labels
+		return label
 
 	def __init__(self, title_dict, songs_paths, ignore_titles):
 		super(LyricsDataset, self).__init__()
@@ -29,7 +27,7 @@ class LyricsDataset(Dataset):
 
 		for path in songs_paths:
 			lyrics = self._get_lyrics(path)
-			label = self._get_labels(title_dict, path)
+			label = self._get_label(title_dict, path)
 
 			title = self._get_title(path)
 
@@ -45,4 +43,4 @@ class LyricsDataset(Dataset):
 	def __getitem__(self, index):
 		title = self.titles[index] if self.ignore_titles else ""
 		return {"lyrics" : self.lyrics[index] + title,
-						"label" : self.labels[index][0]}
+						"label" : self.labels[index]}
