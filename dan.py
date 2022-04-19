@@ -28,10 +28,6 @@ def tokenize_function(example):
   max_size = max([len(x) for x in tokenized_idx])
   final_tokenized_idx = tokenized_idx
 
-  d = {"POP":0, "ROCK":1, "ELECTRONIC":2, "JAZZ":3, "FUNK":4, "HIP_HOP":5, "BLUES":6}
- 
-  for i in range(len(example['label'])): 
-    example['label'][i] = d[example['label'][i]]
   return {"labels":example['label'],'input_ids':final_tokenized_idx}
 
 def make_ds(ds):
@@ -46,7 +42,7 @@ def make_ds(ds):
                               }
                     )
   ### convert to Huggingface dataset
-  hg_dataset = Dataset(pa.Table.from_pandas(df))
+  hg_dataset = Dataset(pa.Table.from_pandas(df)).shuffle()
   return hg_dataset
 
 def pad_sequence_to_length(

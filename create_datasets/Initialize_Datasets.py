@@ -41,7 +41,8 @@ def copy_then_preprocess_song(from_path, target_root,
 
   return valid, to_path
 
-def create_datasets(ignore_titles=True):
+def create_datasets(ignore_titles=True, 
+            labels = ["POP", "ROCK", "ELECTRONIC", "JAZZ", "FUNK", "HIP_HOP", "BLUES"]):
   print(f"[INFO] Starts creating Datasets...")
   if os.path.exists(config.TITLES_GENRES_PATH):
     print(f"[INFO] Loading saved files for datasets...")
@@ -82,7 +83,7 @@ def create_datasets(ignore_titles=True):
   test_paths = paths[split_ind:]
 
   # make the dataset objects
-  train_dataset = LyricsDataset(datasets_title_dict, train_paths, ignore_titles)
-  test_dataset = LyricsDataset(datasets_title_dict, test_paths, ignore_titles)
+  train_dataset = LyricsDataset(datasets_title_dict, train_paths, ignore_titles, labels)
+  test_dataset = LyricsDataset(datasets_title_dict, test_paths, ignore_titles, labels)
 
   return train_dataset, test_dataset
