@@ -109,13 +109,14 @@ class DAN(nn.Module):
           self.loss = nn.CrossEntropyLoss()
 
   def forward(self,input_ids,attention_masks,labels=None,**kwargs):
+      DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
       # word dropout - same vector for each sample
       input_size = input_ids.size()
       p = 0.3
       apply_dropout = torch.nn.Dropout(p)
 
       dropout_mask = torch.ones(input_size[0], input_size[1])
-      dropout_mask = apply_dropout(dropout_mask).bool().int()
+      dropout_mask = apply_dropout(dropout_mask).bool().int().to(DEVICE)
 
       attention_masks = attention_masks * dropout_mask
       masked = input_ids * attention_masks

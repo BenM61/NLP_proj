@@ -150,7 +150,7 @@ class DAN(nn.Module):
 			apply_dropout = torch.nn.Dropout(p)
 
 			dropout_mask = torch.ones(*input_size)
-			dropout_mask = apply_dropout(dropout_mask).bool().int()
+			dropout_mask = apply_dropout(dropout_mask).bool().int().to(DEVICE)
 
 			attention_masks = attention_masks * dropout_mask
 			masked = input_ids * attention_masks
@@ -184,6 +184,8 @@ small_train_dataset = make_ds(tr_ds)
 small_eval_dataset = make_ds(te_ds)
 
 # constants
+DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
 VERSE_PAD_LEN = 36
 SONG_PAD_LEN = 6
 
