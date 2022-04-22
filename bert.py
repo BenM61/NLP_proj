@@ -44,12 +44,12 @@ def evaluate(dataloader_val):
     
     for batch in dataloader_val:   
         batch = tuple(b.to(device) for b in batch)  
-        inputs = {'input_ids':      batch[0],
-                  'attention_mask': batch[1],
-                  'labels':         batch[2],
+        inputs = {'input_ids':      batch[0].to(device),
+                  'attention_mask': batch[1].to(device),
+                  'labels':         batch[2].to(device),
                  }
 
-        with torch.no_grad():        
+        with torch.no_grad():
             outputs = model(**inputs)
             
         loss = outputs[0]
@@ -176,9 +176,9 @@ for epoch in tqdm(range(1, epochs+1)):
     for batch in progress_bar:
         model.zero_grad()
         batch = tuple(b.to(device) for b in batch)
-        inputs = {'input_ids':      batch[0],
-                  'attention_mask': batch[1],
-                  'labels':         batch[2],
+        inputs = {'input_ids':      batch[0].to(device),
+                  'attention_mask': batch[1].to(device),
+                  'labels':         batch[2].to(device),
                  }       
         outputs = model(**inputs) 
         loss = outputs[0]
@@ -217,7 +217,7 @@ model = BertForSequenceClassification.from_pretrained(bert_ver,
                                                       output_hidden_states=False)
 
 model.to(device)
-model.load_state_dict(torch.load('BERT/finetuned_BERT_epoch_3.model', map_location=torch.device('cpu')))
+model.load_state_dict(torch.load('BERT/finetuned_BERT_epoch_3.model', map_location=torch.device(device)))
 _, predictions, true_vals = evaluate(dataloader_validation)
 accuracy_per_class(predictions, true_vals)
 
