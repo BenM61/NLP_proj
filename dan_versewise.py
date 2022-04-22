@@ -151,7 +151,7 @@ class DAN(nn.Module):
 
 			dropout_mask = torch.ones(*input_size)
 			dropout_mask = apply_dropout(dropout_mask).bool().int().to(DEVICE)
-
+			
 			attention_masks = attention_masks * dropout_mask
 			masked = input_ids * attention_masks
 			embs = self.embeddings(masked)
@@ -164,7 +164,7 @@ class DAN(nn.Module):
 			avg = torch.mul(avg, 1 / nonzeros_arr.unsqueeze(-1))
 
 		
-			h0s = self.h0.repeat(1, input_size[0], 1)
+			h0s = self.h0.repeat(1, input_size[0], 1).to(DEVICE)
 			_, output = self.gru(avg, h0s)
 			output = output.squeeze(0)
 
@@ -195,7 +195,7 @@ SONG_PAD_FUNC = lambda: torch.zeros(VERSE_PAD_LEN).long()
 
 co = DataCollatorWithPadding()
 training_args = TrainingArguments("DAN",
-																	num_train_epochs= 2, #must be at least 10.
+																	num_train_epochs= 30, #must be at least 10.
 																	per_device_train_batch_size=32,
 																	per_device_eval_batch_size=4,
 																	learning_rate= 0.001,
