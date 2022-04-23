@@ -83,10 +83,12 @@ def create_df(ds):
 
 
 #getting df
-delete_dataset_files()
+#delete_dataset_files()
 tr_ds, te_ds = create_datasets(ignore_titles=True)
 df_eval = create_df(te_ds)
 df_train = create_df(tr_ds)
+
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 #BERT part
 bert_ver = "bert-base-uncased"
@@ -103,7 +105,7 @@ encoded_data_train = tokenizer.batch_encode_plus(
     return_tensors='pt',
     max_length=256,
     truncation=True
-)
+).to(device)
 
 #to converts lyrics to encoded form
 encoded_data_val = tokenizer.batch_encode_plus(
@@ -114,15 +116,15 @@ encoded_data_val = tokenizer.batch_encode_plus(
     return_tensors='pt',
     max_length=256,
     truncation=True
-)
+).to(device)
 
 input_ids_train = encoded_data_train['input_ids']
 attention_masks_train = encoded_data_train['attention_mask']
-labels_train = torch.tensor(df_train.label.values)
+labels_train = torch.tensor(df_train.label.values).to(device)
 
 input_ids_val = encoded_data_val['input_ids']
 attention_masks_val = encoded_data_val['attention_mask']
-labels_val = torch.tensor(df_eval.label.values)
+labels_val = torch.tensor(df_eval.label.values).to(device)
 
 dataset_train = TensorDataset(input_ids_train, attention_masks_train, labels_train)
 dataset_val = TensorDataset(input_ids_val, attention_masks_val, labels_val)
@@ -131,7 +133,8 @@ dataset_val = TensorDataset(input_ids_val, attention_masks_val, labels_val)
 model = BertForSequenceClassification.from_pretrained(bert_ver,
                                                       num_labels=7,
                                                       output_attentions=False,
-                                                      output_hidden_states=False)
+                                                      output_hidden_states=False).to(device)
+
 
 #dataloader
 dataloader_train = DataLoader(dataset_train, 
@@ -154,7 +157,6 @@ random.seed(seed_val)
 np.random.seed(seed_val)
 torch.manual_seed(seed_val)
 torch.cuda.manual_seed_all(seed_val)
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 from sklearn.utils.class_weight import compute_class_weight
 
@@ -176,10 +178,11 @@ for epoch in tqdm(range(1, epochs+1)):
     for batch in progress_bar:
         model.zero_grad()
         batch = tuple(b.to(device) for b in batch)
-        inputs = {'input_ids':      batch[0].to(device),
-                  'attention_mask': batch[1].to(device),
-                  'labels':         batch[2].to(device),
-                 }       
+        inputs = {'input_ids':      batch[0],
+                  'attention_mask': batch[1],
+                  'labels':         batch[2],
+                 }
+
         outputs = model(**inputs) 
         loss = outputs[0]
         loss_train_total += loss.item()
